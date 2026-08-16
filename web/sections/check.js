@@ -13,10 +13,20 @@
     return Math.round(num * 100);
   }
 
+  var onFilterChange = function(){};
+
   function mount(container, state){
     container.innerHTML =
       '<div class="glass" style="padding:22px; display:flex; flex-direction:column; gap:14px;">' +
-        '<label style="font-size:13px; font-weight:600;">Company<select id="check-company"><option value="">Choose a company…</option></select></label>' +
+        '<label style="font-size:13px; font-weight:600;">Company</label>' +
+        '<div class="search-wrap" aria-label="Search companies">' +
+          '<span class="search-ico" aria-hidden="true">' +
+            '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>' +
+          '</span>' +
+          '<input id="check-company-search" class="search-input" type="search" autocomplete="off" spellcheck="false" placeholder="Search company name..." aria-label="Search company name">' +
+        '</div>' +
+        '<ul id="check-company-results" class="stagger" style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;"></ul>' +
+        '<p id="check-company-selected" style="font-size:13px; color:var(--ink-soft); margin:0; display:none;"></p>' +
         '<label style="font-size:13px; font-weight:600;">Title<select id="check-title"></select></label>' +
         '<label style="font-size:13px; font-weight:600;">State<select id="check-state"></select></label>' +
         '<div class="actions" style="display:flex; justify-content:flex-end;"><button id="check-go" class="go press" type="button">Visualize →</button></div>' +
@@ -35,7 +45,9 @@
         '<ul class="evidence" id="evidence" style="display:flex; flex-direction:column; gap:8px; margin:0; padding:0; list-style:none;"></ul>' +
       '</div>';
 
-    var companyEl = container.querySelector('#check-company');
+    var companySearchEl = container.querySelector('#check-company-search');
+    var companyResultsEl = container.querySelector('#check-company-results');
+    var selectedEl = container.querySelector('#check-company-selected');
     var titleEl = container.querySelector('#check-title');
     var stateEl = container.querySelector('#check-state');
     var goEl = container.querySelector('#check-go');
@@ -45,19 +57,12 @@
     var jsonGoEl = container.querySelector('#check-json-go');
 
     var employers = [];
-    var byKey = {};
+    var selectedEmployer = null;
+    var lastSetValue = '';
 
     window.employersPromise.then(function(data){
       employers = data;
-      byKey = {};
-      companyEl.innerHTML = '<option value="">Choose a company…</option>' + employers.map(function(e){
-        byKey[e.n] = e;
-        return '<option value="' + esc(e.n) + '">' + esc(e.n) + '</option>';
-      }).join('');
-      if (state.get().company){
-        var pre = employers.find(function(e){ return e.n.toLowerCase().indexOf(state.get().company.toLowerCase()) !== -1; });
-        if (pre){ companyEl.value = pre.n; populateEmployerOptions(pre); }
-      }
+      syncFromSharedState(state.get().company, true);
     });
 
     function populateEmployerOptions(employer){
@@ -65,9 +70,51 @@
       stateEl.innerHTML = employer.s.map(function(s){ return '<option value="' + esc(s) + '">' + esc(s) + '</option>'; }).join('');
     }
 
-    companyEl.addEventListener('change', function(){
-      var employer = byKey[companyEl.value];
-      if (employer) populateEmployerOptions(employer);
+    function renderCompanyResults(){
+      var query = companySearchEl.value;
+      var matches = query ? VisaRadarMatcher.filterEmployers(employers, { query: query }).slice(0, 50) : [];
+      companyResultsEl.innerHTML = matches.map(function(employer){
+        return '<li><button type="button" class="glass" data-company-key="' + esc(employer.k) + '" style="width:100%; padding:12px 16px; text-align:left; color:inherit; font:inherit; cursor:pointer;">' +
+          '<strong>' + esc(employer.n) + '</strong>' +
+          '<div style="font-size:13px; color:var(--ink-soft); margin-top:3px;">' + esc(employer.t[0] || '') + ' · ' + employer.s.join(', ') + '</div>' +
+        '</button></li>';
+      }).join('');
+      companyResultsEl.querySelectorAll('[data-company-key]').forEach(function(button){
+        button.addEventListener('click', function(){
+          var employer = employers.find(function(e){ return e.k === button.dataset.companyKey; });
+          if (employer) selectEmployer(employer);
+        });
+      });
+    }
+
+    function selectEmployer(employer){
+      selectedEmployer = employer;
+      companySearchEl.value = employer.n;
+      lastSetValue = employer.n;
+      selectedEl.textContent = 'Selected: ' + employer.n;
+      selectedEl.style.display = 'block';
+      companyResultsEl.innerHTML = '';
+      populateEmployerOptions(employer);
+    }
+
+    function syncFromSharedState(company, allowSelection){
+      company = company || '';
+      companySearchEl.value = company;
+      lastSetValue = company;
+      renderCompanyResults();
+      if (!allowSelection || !company || !employers.length) return;
+      var normalized = company.toLowerCase();
+      var matches = VisaRadarMatcher.filterEmployers(employers, { query: company });
+      var exact = matches.find(function(e){ return e.n.toLowerCase() === normalized; });
+      if (exact || matches.length === 1) selectEmployer(exact || matches[0]);
+    }
+
+    companySearchEl.addEventListener('input', function(){
+      if (companySearchEl.value !== lastSetValue){
+        selectedEmployer = null;
+        selectedEl.style.display = 'none';
+      }
+      renderCompanyResults();
     });
 
     function render(data){
@@ -103,7 +150,7 @@
     }
 
     goEl.addEventListener('click', function(){
-      var employer = byKey[companyEl.value];
+      var employer = selectedEmployer;
       if (!employer){
         errEl.textContent = 'Choose a company first.';
         errEl.style.display = 'block';
@@ -125,7 +172,15 @@
         errEl.style.display = 'block';
       }
     });
+
+    onFilterChange = function(newState){
+      var company = newState.company || '';
+      if (company === (selectedEmployer && selectedEmployer.n)) return;
+      if (!companySearchEl.value || companySearchEl.value === lastSetValue){
+        syncFromSharedState(company, false);
+      }
+    };
   }
 
-  window.AppShell.registerSection('check', { mount: mount });
+  window.AppShell.registerSection('check', { mount: mount, onFilterChange: function(newState){ onFilterChange(newState); } });
 })();
