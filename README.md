@@ -69,7 +69,10 @@ A self-contained, zero-dependency multi-page site in `web/` — no server needed
 - **`byok.html`** — no CLI install needed: pick a provider (or local Ollama, no key), paste your API key, paste a posting, and it calls the LLM directly from the browser. Your key never leaves local storage except to the provider you chose.
 - **`journey.html`** — a personal step-by-step tracker for the weeks between an offer and a visa in hand (documents, SEVIS fee, DS-160, interview, decision). Self-reported checkboxes only — no payments processed, no forms filed, nothing sent anywhere. Progress is saved in your browser's local storage, so it survives the real multi-week timeline.
 - **`checklist.html`** — real F-1/J-1 document checklists and SEVIS fee amounts ($350 / $220), sourced and cited from travel.state.gov and ice.gov, not a blog's guess. Explicitly does not include "sample interview questions" — the State Department publishes none, and VisaRadar won't fabricate them for something this high-stakes to get wrong. Links out to the official SEVP school search and J-1 sponsor list rather than claiming bulk coverage that doesn't publicly exist.
+- **`guide.html`** — a step-by-step "apply yourself" guide against the expensive-agent problem, with real government fee totals and a per-country reciprocity-fee lookup (5 confirmed countries, links to the official State Department index for the rest).
 - **`install.html`** / **`mcp.html`** — CLI reference and MCP setup instructions.
+
+Every result — CLI, MCP, and both `browse.html`/`byok.html` — now also surfaces the real median wage filed for that employer (from DOL LCA `WAGE_RATE_OF_PAY`/`WAGE_UNIT_OF_PAY` data) alongside a cost-of-living-adjusted figure for the employer's top filing state, using BEA Regional Price Parity data.
 
 ### MCP
 

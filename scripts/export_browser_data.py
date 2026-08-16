@@ -39,6 +39,7 @@ def main() -> None:
                 "l": label_for(total_filings),
                 "s": record.states[:3],
                 "t": record.top_titles[:3],
+                "w": record.wage["median"] if record.wage else None,
             }
         )
 

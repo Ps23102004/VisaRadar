@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from visaradar.lca_data import EmployerRecord
+from visaradar.cost_of_living import load_cost_of_living, adjusted_wage
 
 _LABEL_ORDER = ["none", "weak", "moderate", "strong"]
 
@@ -62,6 +63,26 @@ def assess(record: EmployerRecord | None, posting_stance: str) -> Assessment:
 
     if record.top_titles:
         evidence.append(f"top job titles: {', '.join(record.top_titles[:3])}")
+
+    if record.wage:
+        w = record.wage
+        evidence.append(
+            f"median offered wage: ${w['median']:,}/yr "
+            f"(typical range ${w['p25']:,}–${w['p75']:,}, n={w['n']:,} filings)"
+        )
+        if record.states:
+            top_state = record.states[0]
+            col_data = load_cost_of_living()
+            real_value = adjusted_wage(w["median"], top_state, col_data)
+            if real_value is not None:
+                state_name = col_data[top_state]["name"]
+                rpp = col_data[top_state]["rpp"]
+                direction = "pricier than" if rpp > 100 else "cheaper than"
+                evidence.append(
+                    f"in {state_name}, that median wage is worth about ${real_value:,}/yr "
+                    f"in national-average purchasing power ({state_name} runs {abs(rpp - 100):.0f}% {direction} "
+                    f"the national average, per BEA Regional Price Parity data)"
+                )
 
     if posting_stance == "no_sponsor":
         if label in ("moderate", "strong"):

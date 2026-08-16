@@ -73,3 +73,32 @@ def test_trend_evidence_present_with_two_years():
     })
     result = assess(record, "silent")
     assert any("increasing" in e for e in result.evidence)
+
+
+def test_no_wage_evidence_when_wage_is_none():
+    record = _record({"2025": {"filings": 25, "certified": 20, "denied": 2}})
+    result = assess(record, "silent")
+    assert not any("median offered wage" in e for e in result.evidence)
+
+
+def test_wage_evidence_present_when_wage_data_exists():
+    record = EmployerRecord(
+        name="ACME", display_name="Acme Inc",
+        by_fy={"2025": {"filings": 25, "certified": 20, "denied": 2}},
+        top_titles=["Engineer"], states=[],
+        wage={"median": 150000, "p25": 130000, "p75": 170000, "n": 25},
+    )
+    result = assess(record, "silent")
+    assert any("median offered wage: $150,000" in e for e in result.evidence)
+
+
+def test_cost_of_living_evidence_present_when_state_known():
+    record = EmployerRecord(
+        name="ACME", display_name="Acme Inc",
+        by_fy={"2025": {"filings": 25, "certified": 20, "denied": 2}},
+        top_titles=["Engineer"], states=["CA"],
+        wage={"median": 150000, "p25": 130000, "p75": 170000, "n": 25},
+    )
+    result = assess(record, "silent")
+    assert any("purchasing power" in e for e in result.evidence)
+    assert any("California" in e for e in result.evidence)

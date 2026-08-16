@@ -9,7 +9,7 @@ import openpyxl
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from visaradar.ingest import LCARow, aggregate
+from visaradar.ingest import LCARow, aggregate, annualize_wage
 
 RAW_FILES = {
     "2024": "LCA_Disclosure_Data_FY2024_Q4.xlsx",
@@ -31,6 +31,9 @@ def read_rows(path: Path, fiscal_year: str) -> list[LCARow]:
         if col not in idx:
             raise ValueError(f"{path.name}: missing expected column {col}")
     state_col = idx.get("WORKSITE_STATE") or idx.get("EMPLOYER_STATE")
+    wage_from_col = idx.get("WAGE_RATE_OF_PAY_FROM")
+    wage_to_col = idx.get("WAGE_RATE_OF_PAY_TO")
+    wage_unit_col = idx.get("WAGE_UNIT_OF_PAY")
 
     rows: list[LCARow] = []
     for values in ws.iter_rows(min_row=2, values_only=True):
@@ -43,6 +46,9 @@ def read_rows(path: Path, fiscal_year: str) -> list[LCARow]:
         if not employer_name or not case_status:
             continue
         worksite_state = values[state_col] if state_col is not None else None
+        wage_from = values[wage_from_col] if wage_from_col is not None else None
+        wage_to = values[wage_to_col] if wage_to_col is not None else None
+        wage_unit = values[wage_unit_col] if wage_unit_col is not None else None
         rows.append(
             LCARow(
                 employer_name=str(employer_name),
@@ -50,6 +56,7 @@ def read_rows(path: Path, fiscal_year: str) -> list[LCARow]:
                 fiscal_year=fiscal_year,
                 job_title=str(job_title) if job_title else "",
                 worksite_state=str(worksite_state).strip().upper() if worksite_state else "",
+                wage_annual=annualize_wage(wage_from, wage_to, wage_unit),
             )
         )
     wb.close()

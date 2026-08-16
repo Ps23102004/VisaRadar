@@ -1,0 +1,257 @@
+{
+  "AK": {
+    "name": "Alaska",
+    "rpp": 102.4,
+    "year": "2024"
+  },
+  "AL": {
+    "name": "Alabama",
+    "rpp": 88.8,
+    "year": "2024"
+  },
+  "AR": {
+    "name": "Arkansas",
+    "rpp": 86.9,
+    "year": "2024"
+  },
+  "AZ": {
+    "name": "Arizona",
+    "rpp": 100.7,
+    "year": "2024"
+  },
+  "CA": {
+    "name": "California",
+    "rpp": 110.7,
+    "year": "2024"
+  },
+  "CO": {
+    "name": "Colorado",
+    "rpp": 103.1,
+    "year": "2024"
+  },
+  "CT": {
+    "name": "Connecticut",
+    "rpp": 103.6,
+    "year": "2024"
+  },
+  "DC": {
+    "name": "District of Columbia",
+    "rpp": 109.9,
+    "year": "2024"
+  },
+  "DE": {
+    "name": "Delaware",
+    "rpp": 99.8,
+    "year": "2024"
+  },
+  "FL": {
+    "name": "Florida",
+    "rpp": 103.4,
+    "year": "2024"
+  },
+  "GA": {
+    "name": "Georgia",
+    "rpp": 96.3,
+    "year": "2024"
+  },
+  "HI": {
+    "name": "Hawaii",
+    "rpp": 110.0,
+    "year": "2024"
+  },
+  "IA": {
+    "name": "Iowa",
+    "rpp": 87.8,
+    "year": "2024"
+  },
+  "ID": {
+    "name": "Idaho",
+    "rpp": 95.5,
+    "year": "2024"
+  },
+  "IL": {
+    "name": "Illinois",
+    "rpp": 100.0,
+    "year": "2024"
+  },
+  "IN": {
+    "name": "Indiana",
+    "rpp": 93.3,
+    "year": "2024"
+  },
+  "KS": {
+    "name": "Kansas",
+    "rpp": 90.1,
+    "year": "2024"
+  },
+  "KY": {
+    "name": "Kentucky",
+    "rpp": 90.2,
+    "year": "2024"
+  },
+  "LA": {
+    "name": "Louisiana",
+    "rpp": 88.2,
+    "year": "2024"
+  },
+  "MA": {
+    "name": "Massachusetts",
+    "rpp": 105.8,
+    "year": "2024"
+  },
+  "MD": {
+    "name": "Maryland",
+    "rpp": 105.0,
+    "year": "2024"
+  },
+  "ME": {
+    "name": "Maine",
+    "rpp": 97.0,
+    "year": "2024"
+  },
+  "MI": {
+    "name": "Michigan",
+    "rpp": 96.2,
+    "year": "2024"
+  },
+  "MN": {
+    "name": "Minnesota",
+    "rpp": 98.6,
+    "year": "2024"
+  },
+  "MO": {
+    "name": "Missouri",
+    "rpp": 90.8,
+    "year": "2024"
+  },
+  "MS": {
+    "name": "Mississippi",
+    "rpp": 87.0,
+    "year": "2024"
+  },
+  "MT": {
+    "name": "Montana",
+    "rpp": 94.6,
+    "year": "2024"
+  },
+  "NC": {
+    "name": "North Carolina",
+    "rpp": 94.3,
+    "year": "2024"
+  },
+  "ND": {
+    "name": "North Dakota",
+    "rpp": 89.0,
+    "year": "2024"
+  },
+  "NE": {
+    "name": "Nebraska",
+    "rpp": 90.1,
+    "year": "2024"
+  },
+  "NH": {
+    "name": "New Hampshire",
+    "rpp": 104.2,
+    "year": "2024"
+  },
+  "NJ": {
+    "name": "New Jersey",
+    "rpp": 108.8,
+    "year": "2024"
+  },
+  "NM": {
+    "name": "New Mexico",
+    "rpp": 92.2,
+    "year": "2024"
+  },
+  "NV": {
+    "name": "Nevada",
+    "rpp": 100.0,
+    "year": "2024"
+  },
+  "NY": {
+    "name": "New York",
+    "rpp": 107.9,
+    "year": "2024"
+  },
+  "OH": {
+    "name": "Ohio",
+    "rpp": 92.8,
+    "year": "2024"
+  },
+  "OK": {
+    "name": "Oklahoma",
+    "rpp": 87.8,
+    "year": "2024"
+  },
+  "OR": {
+    "name": "Oregon",
+    "rpp": 103.4,
+    "year": "2024"
+  },
+  "PA": {
+    "name": "Pennsylvania",
+    "rpp": 97.6,
+    "year": "2024"
+  },
+  "RI": {
+    "name": "Rhode Island",
+    "rpp": 102.3,
+    "year": "2024"
+  },
+  "SC": {
+    "name": "South Carolina",
+    "rpp": 93.7,
+    "year": "2024"
+  },
+  "SD": {
+    "name": "South Dakota",
+    "rpp": 88.6,
+    "year": "2024"
+  },
+  "TN": {
+    "name": "Tennessee",
+    "rpp": 91.9,
+    "year": "2024"
+  },
+  "TX": {
+    "name": "Texas",
+    "rpp": 97.1,
+    "year": "2024"
+  },
+  "UT": {
+    "name": "Utah",
+    "rpp": 98.9,
+    "year": "2024"
+  },
+  "VA": {
+    "name": "Virginia",
+    "rpp": 101.1,
+    "year": "2024"
+  },
+  "VT": {
+    "name": "Vermont",
+    "rpp": 98.0,
+    "year": "2024"
+  },
+  "WA": {
+    "name": "Washington",
+    "rpp": 107.0,
+    "year": "2024"
+  },
+  "WI": {
+    "name": "Wisconsin",
+    "rpp": 94.1,
+    "year": "2024"
+  },
+  "WV": {
+    "name": "West Virginia",
+    "rpp": 89.5,
+    "year": "2024"
+  },
+  "WY": {
+    "name": "Wyoming",
+    "rpp": 92.7,
+    "year": "2024"
+  }
+}

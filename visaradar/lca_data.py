@@ -5,7 +5,7 @@ import importlib.resources
 import json
 import os
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 @dataclass
@@ -15,6 +15,7 @@ class EmployerRecord:
     by_fy: Dict[str, Dict[str, int]]
     top_titles: List[str]
     states: List[str]
+    wage: Optional[Dict[str, int]] = None
 
 
 def load_snapshot(path: str) -> Dict[str, EmployerRecord]:
@@ -31,6 +32,7 @@ def load_snapshot(path: str) -> Dict[str, EmployerRecord]:
                 by_fy=obj.get("by_fy", {}),
                 top_titles=obj.get("top_titles", []),
                 states=obj.get("states", []),
+                wage=obj.get("wage"),
             )
             records[rec.name] = rec
     return records

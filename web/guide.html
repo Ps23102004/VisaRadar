@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Apply Yourself — VisaRadar</title>
+<style>
+  :root{ --mx: 50%; --my: 50%; --accent: #FF9500; --strong: #30D158; }
+  *{ box-sizing: border-box; }
+  html, body{ margin: 0; padding: 0; }
+  body{
+    min-height: 100vh;
+    background: #FBFBFD;
+    background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.08), transparent 60%);
+    background-attachment: fixed;
+    color: #0A0A0C;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage{ max-width: 720px; margin: 0 auto; padding: 40px 22px 128px; }
+  nav{ display: flex; gap: 24px; align-items: center; font-size: 14px; margin-bottom: 40px; flex-wrap: wrap; }
+  nav .logo{ font-weight: 700; font-size: 16px; margin-right: auto; }
+  nav a{ color: rgba(10,10,12,0.6); text-decoration: none; }
+  nav a:hover{ color: #0A0A0C; }
+  nav a.current{ color: #0A0A0C; font-weight: 600; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+  h1{ font-size: 30px; font-weight: 600; letter-spacing: -0.03em; margin: 0 0 8px; }
+  .tagline{ font-size: 15px; color: rgba(10,10,12,0.6); margin: 0 0 12px; line-height: 1.5; }
+  .disclaimer{ font-size: 13px; color: rgba(10,10,12,0.5); margin: 0 0 28px; padding: 10px 14px; background: rgba(255,149,0,0.08); border-radius: 10px; border: 1px solid rgba(255,149,0,0.2); }
+  h2{ font-size: 20px; font-weight: 600; margin: 40px 0 4px; }
+  p{ font-size: 15px; line-height: 1.6; color: rgba(10,10,12,0.78); }
+  .glass{
+    position: relative; overflow: hidden;
+    background: rgba(255,255,255,0.55);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+  }
+
+  /* Cost comparison */
+  .compare{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 8px; }
+  .compare-card{ padding: 20px; text-align: center; }
+  .compare-card .label{ font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: rgba(10,10,12,0.5); margin-bottom: 8px; }
+  .compare-card .amount{ font-size: 28px; font-weight: 700; }
+  .compare-card.yours .amount{ color: var(--strong); }
+  .compare-card.agent .amount{ color: #E33B3B; }
+  .savings{ text-align: center; font-size: 14px; color: var(--strong); font-weight: 600; margin: 10px 0 30px; }
+
+  /* Steps */
+  .steps{ list-style: none; margin: 0; padding: 0; counter-reset: step; }
+  .step{ padding: 18px; margin-bottom: 10px; display: flex; gap: 16px; }
+  .step-num{
+    flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+  .step-body strong{ display: block; font-size: 15px; margin-bottom: 4px; }
+  .step-body p{ font-size: 13.5px; margin: 0; color: rgba(10,10,12,0.6); }
+  .step-body a{ color: var(--accent); text-decoration: none; }
+
+  .cta{ display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .cta a{
+    text-decoration: none; padding: 12px 22px; border-radius: 999px; font-size: 14px; font-weight: 600;
+  }
+  .cta a.primary{ background: var(--accent); color: #fff; }
+  .cta a.secondary{ background: rgba(0,0,0,0.05); color: #0A0A0C; }
+
+  .source{ font-size: 12px; color: rgba(10,10,12,0.4); margin-top: 40px; }
+
+  @media (max-width: 480px){ .compare{ grid-template-columns: 1fr; } }
+
+  @media (prefers-color-scheme: dark){
+    body{ color: #F5F5F7; background: #000000; background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.14), transparent 62%); }
+    nav a{ color: rgba(245,245,247,0.6); }
+    nav a:hover, nav a.current{ color: #F5F5F7; }
+    .tagline, p{ color: rgba(245,245,247,0.7); }
+    .disclaimer{ color: rgba(245,245,247,0.6); }
+    .glass{ background: rgba(28,28,30,0.55); border: 1px solid rgba(255,255,255,0.1); }
+    .compare-card .label{ color: rgba(245,245,247,0.5); }
+    .step-body p{ color: rgba(245,245,247,0.6); }
+    .cta a.secondary{ background: rgba(255,255,255,0.08); color: #F5F5F7; }
+    .source{ color: rgba(245,245,247,0.35); }
+  }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <nav>
+      <span class="logo">VisaRadar</span>
+      <a href="browse.html">Browse</a>
+      <a href="check.html">Check</a>
+      <a href="byok.html">Bring your key</a>
+      <a href="journey.html">My Journey</a>
+      <a href="checklist.html">Checklist</a>
+      <a href="guide.html" class="current">Apply Yourself</a>
+      <a href="install.html">Install</a>
+      <a href="mcp.html">MCP</a>
+    </nav>
+
+    <h1>You don't need an agent</h1>
+    <p class="tagline">Visa consultants in places like India routinely charge ₹2–3 lakh (~$2,000–3,500) to fill out forms that are, honestly, just forms. Here's the actual process, and what it really costs when you do it yourself.</p>
+    <p class="disclaimer">Informational only, not legal advice. If your situation is complicated (prior denials, unusual history, dependents, etc.), a real immigration attorney is worth paying for — that's different from paying an agent to type your DS-160.</p>
+
+    <h2>The real cost, F-1 example</h2>
+    <div class="compare">
+      <div class="compare-card glass yours">
+        <div class="label">Doing it yourself</div>
+        <div class="amount">~$785</div>
+      </div>
+      <div class="compare-card glass agent">
+        <div class="label">Typical agent fee</div>
+        <div class="amount">$2,000–3,500</div>
+      </div>
+    </div>
+    <p class="savings">That's the government fees only: $350 SEVIS I-901 fee + $185 MRV visa fee + $250 Visa Integrity Fee (new as of 2026, most categories) — nothing an agent adds is a government requirement.</p>
+
+    <h2>Your fee depends on your nationality</h2>
+    <p>The $185 MRV fee above is the base. Some countries pay a different, extra "reciprocity" fee on top — set by how that country treats U.S. citizens, not by anything you do. Pick your country to see its official reciprocity page:</p>
+    <div class="glass" style="padding:16px; margin:14px 0 30px;">
+      <select id="country-pick" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.12); background:transparent; font-size:14px; color:inherit;">
+        <option value="">Select your country…</option>
+        <option value="India.html">India</option>
+        <option value="China.html">China</option>
+        <option value="SouthKorea.html">South Korea</option>
+        <option value="Canada.html">Canada</option>
+        <option value="Mexico.html">Mexico</option>
+        <option value="">Other — use the full country list</option>
+      </select>
+    </div>
+
+    <h2>The actual steps</h2>
+    <ul class="steps">
+      <li class="step glass">
+        <div class="step-num">1</div>
+        <div class="step-body"><strong>Get your I-20 or DS-2019</strong><p>Issued directly by your school or program sponsor once you're admitted. No agent involved in this step at all.</p></div>
+      </li>
+      <li class="step glass">
+        <div class="step-num">2</div>
+        <div class="step-body"><strong>Pay the SEVIS I-901 fee yourself</strong><p>Only at <a href="https://www.fmjfee.com/">fmjfee.com</a> — this is a 5-minute form with a credit card, not something worth paying someone else $500+ to click through.</p></div>
+      </li>
+      <li class="step glass">
+        <div class="step-num">3</div>
+        <div class="step-body"><strong>Fill out the DS-160 yourself</strong><p>At <a href="https://ceac.state.gov/">ceac.state.gov</a>. It asks for information you already know about yourself — your history, your program, your finances. It's long, not hard.</p></div>
+      </li>
+      <li class="step glass">
+        <div class="step-num">4</div>
+        <div class="step-body"><strong>Pay the visa fee and schedule your interview</strong><p>Through your embassy's official appointment system, linked from the DS-160 confirmation page.</p></div>
+      </li>
+      <li class="step glass">
+        <div class="step-num">5</div>
+        <div class="step-body"><strong>Gather your documents</strong><p>See the <a href="checklist.html">real checklist</a> — every item on it is something you already have or can get directly, no agent required.</p></div>
+      </li>
+      <li class="step glass">
+        <div class="step-num">6</div>
+        <div class="step-body"><strong>Go to your interview</strong><p>Answer honestly about your program and your intent to return home after it. That's genuinely what's being assessed.</p></div>
+      </li>
+    </ul>
+
+    <div class="cta">
+      <a class="primary" href="journey.html">Track your progress →</a>
+      <a class="secondary" href="checklist.html">See the full checklist</a>
+    </div>
+
+    <p class="source">Fee amounts verified against travel.state.gov and fmjfee.com, 2026-08-16 — fees change, confirm the current amount before you pay anything.</p>
+  </main>
+
+  <script>
+    var RECIPROCITY_BASE = 'https://travel.state.gov/content/travel/en/us-visas/Visa-Reciprocity-and-Civil-Documents-by-Country/';
+    var RECIPROCITY_INDEX = 'https://travel.state.gov/content/travel/en/us-visas/Visa-Reciprocity-and-Civil-Documents-by-Country.html';
+    document.getElementById('country-pick').addEventListener('change', function(e){
+      var page = e.target.value;
+      window.open(page ? RECIPROCITY_BASE + page : RECIPROCITY_INDEX, '_blank', 'noopener,noreferrer');
+      e.target.selectedIndex = 0;
+    });
+    document.addEventListener('mousemove', function(e){
+      document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+      document.documentElement.style.setProperty('--my', e.clientY + 'px');
+    }, { passive: true });
+  </script>
+</body>
+</html>

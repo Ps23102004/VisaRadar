@@ -1,8 +1,17 @@
 from __future__ import annotations
 
+import statistics
 from collections import Counter
 from dataclasses import dataclass
 from visaradar.matcher import normalize_name
+
+_ANNUAL_MULTIPLIER = {
+    "Year": 1,
+    "Month": 12,
+    "Bi-Weekly": 26,
+    "Week": 52,
+    "Hour": 2080,
+}
 
 
 @dataclass
@@ -12,6 +21,20 @@ class LCARow:
     fiscal_year: str
     job_title: str
     worksite_state: str = ""
+    wage_annual: float | None = None
+
+
+def annualize_wage(wage_from: float | None, wage_to: float | None, unit: str | None) -> float | None:
+    """Midpoint of the filed wage range, converted to an annual figure.
+
+    Returns None for missing/zero/unrecognized-unit input rather than guessing --
+    a wrong wage figure is worse than an absent one for something this
+    financially consequential.
+    """
+    if not wage_from or not unit or unit not in _ANNUAL_MULTIPLIER:
+        return None
+    midpoint = (wage_from + wage_to) / 2 if wage_to else wage_from
+    return midpoint * _ANNUAL_MULTIPLIER[unit]
 
 
 def aggregate(rows: list[LCARow]) -> dict[str, dict]:
@@ -19,6 +42,7 @@ def aggregate(rows: list[LCARow]) -> dict[str, dict]:
     original_names: dict[str, list[str]] = {}
     job_titles_by_employer: dict[str, list[str]] = {}
     states_by_employer: dict[str, list[str]] = {}
+    wages_by_employer: dict[str, list[float]] = {}
 
     for row in rows:
         norm = normalize_name(row.employer_name)
@@ -27,6 +51,8 @@ def aggregate(rows: list[LCARow]) -> dict[str, dict]:
         job_titles_by_employer.setdefault(norm, []).append(row.job_title)
         if row.worksite_state:
             states_by_employer.setdefault(norm, []).append(row.worksite_state)
+        if row.wage_annual:
+            wages_by_employer.setdefault(norm, []).append(row.wage_annual)
 
     result: dict[str, dict] = {}
 
@@ -51,12 +77,24 @@ def aggregate(rows: list[LCARow]) -> dict[str, dict]:
         state_counter = Counter(states_by_employer.get(norm, []))
         states = [state for state, _ in state_counter.most_common()]
 
+        wages = sorted(wages_by_employer.get(norm, []))
+        wage_stats = None
+        if wages:
+            quantiles = statistics.quantiles(wages, n=4) if len(wages) >= 2 else [wages[0]] * 3
+            wage_stats = {
+                "median": round(statistics.median(wages)),
+                "p25": round(quantiles[0]),
+                "p75": round(quantiles[2]),
+                "n": len(wages),
+            }
+
         result[norm] = {
             "name": norm,
             "display_name": display_name,
             "by_fy": by_fy,
             "top_titles": top_titles,
             "states": states,
+            "wage": wage_stats,
         }
 
     return result
