@@ -1,6 +1,12 @@
 (function(){
   "use strict";
 
+  function esc(s){
+    var d = document.createElement('div');
+    d.textContent = String(s);
+    return d.innerHTML;
+  }
+
   function mount(container, state){
     container.innerHTML =
       '<section class="search-wrap glass fade-in" aria-label="Search employers">' +
@@ -26,8 +32,8 @@
       var matches = VisaRadarMatcher.filterEmployers(employers, { query: query }).slice(0, 40);
       resultsEl.innerHTML = matches.map(function(e){
         return '<li class="glass" style="padding:14px 18px;">' +
-          '<strong>' + e.n + '</strong>' +
-          '<div style="font-size:13px; color:var(--ink-soft);">' + (e.t[0] || '') + ' · ' + e.s.join(', ') + ' · $' + Number(e.w).toLocaleString() + '</div>' +
+          '<strong>' + esc(e.n) + '</strong>' +
+          '<div style="font-size:13px; color:var(--ink-soft);">' + esc(e.t[0] || '') + ' · ' + e.s.join(', ') + ' · $' + Number(e.w).toLocaleString() + '</div>' +
           '</li>';
       }).join('');
     }
