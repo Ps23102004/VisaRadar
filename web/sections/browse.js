@@ -80,8 +80,17 @@
     return normalizeConstraints(JSON.parse(stripCodeFence(raw)));
   }
 
+  // A small number of records in employers.json (confirmed via direct inspection: ~117 of
+  // 67,722, up to $393M) carry what look like aggregate payroll totals in the wage field
+  // rather than a per-employee "typical wage" -- a data quality issue in the underlying
+  // dataset, not something fixable here, but it was dominating "top by wage" results with
+  // implausible outliers. $2,000,000/year is a generous ceiling for a real individual
+  // salary (well above even top tech/exec pay) and excludes only ~0.17% of records.
+  var PLAUSIBLE_MAX_WAGE = 2000000;
+
   function topByWage(employers){
-    return employers.slice().sort(function(a, b){ return Number(b.w || 0) - Number(a.w || 0); }).slice(0, 20);
+    return employers.filter(function(e){ return Number(e.w || 0) <= PLAUSIBLE_MAX_WAGE; })
+      .sort(function(a, b){ return Number(b.w || 0) - Number(a.w || 0); }).slice(0, 20);
   }
 
   function filterCandidates(employers, constraints){
