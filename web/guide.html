@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+<link rel="stylesheet" href="theme.css">
 <meta name="referrer" content="no-referrer">
 <title>Apply Yourself — VisaRadar</title>
 <style>
-  :root{ --mx: 50%; --my: 50%; --accent: #FF9500; --strong: #30D158; }
   *{ box-sizing: border-box; }
   html, body{ margin: 0; padding: 0; }
   body{
@@ -21,11 +21,6 @@
     -webkit-font-smoothing: antialiased;
   }
   .stage{ max-width: 720px; margin: 0 auto; padding: 40px 22px 128px; }
-  nav{ display: flex; gap: 24px; align-items: center; font-size: 14px; margin-bottom: 40px; flex-wrap: wrap; }
-  nav .logo{ font-weight: 700; font-size: 16px; margin-right: auto; }
-  nav a{ color: rgba(10,10,12,0.6); text-decoration: none; }
-  nav a:hover{ color: #0A0A0C; }
-  nav a.current{ color: #0A0A0C; font-weight: 600; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
   h1{ font-size: 30px; font-weight: 600; letter-spacing: -0.03em; margin: 0 0 8px; }
   .tagline{ font-size: 15px; color: rgba(10,10,12,0.6); margin: 0 0 12px; line-height: 1.5; }
   .disclaimer{ font-size: 13px; color: rgba(10,10,12,0.5); margin: 0 0 28px; padding: 10px 14px; background: rgba(255,149,0,0.08); border-radius: 10px; border: 1px solid rgba(255,149,0,0.2); }
@@ -73,8 +68,6 @@
 
   @media (prefers-color-scheme: dark){
     body{ color: #F5F5F7; background: #000000; background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.14), transparent 62%); }
-    nav a{ color: rgba(245,245,247,0.6); }
-    nav a:hover, nav a.current{ color: #F5F5F7; }
     .tagline, p{ color: rgba(245,245,247,0.7); }
     .disclaimer{ color: rgba(245,245,247,0.6); }
     .glass{ background: rgba(28,28,30,0.55); border: 1px solid rgba(255,255,255,0.1); }
@@ -87,17 +80,7 @@
 </head>
 <body>
   <main class="stage">
-    <nav>
-      <span class="logo">VisaRadar</span>
-      <a href="browse.html">Browse</a>
-      <a href="check.html">Check</a>
-      <a href="byok.html">Bring your key</a>
-      <a href="journey.html">My Journey</a>
-      <a href="checklist.html">Checklist</a>
-      <a href="guide.html" class="current">Apply Yourself</a>
-      <a href="install.html">Install</a>
-      <a href="mcp.html">MCP</a>
-    </nav>
+    <div class="nav-mount"></div>
 
     <h1>You don't need an agent</h1>
     <p class="tagline">Visa consultants in places like India routinely charge ₹2–3 lakh (~$2,000–3,500) to fill out forms that are, honestly, just forms. Here's the actual process, and what it really costs when you do it yourself.</p>
@@ -179,5 +162,7 @@
       document.documentElement.style.setProperty('--my', e.clientY + 'px');
     }, { passive: true });
   </script>
+  <script src="lib/nav.js"></script>
+  <script>VisaRadarNav.mountNav('guide.html');</script>
 </body>
 </html>
