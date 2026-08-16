@@ -76,8 +76,8 @@
     var resetBtn = container.querySelector('#journey-reset');
 
     var visaKey = VISA_KEY_MAP[appState.get().visaType] || 'f1';
-    var stored = loadState() || { visaType: visaKey, steps: {} };
-    var localState = stored;
+    var stored = loadState();
+    var localState = { visaType: visaKey, steps: (stored && stored.steps) || {} };
 
     function render(){
       var defs = STEP_DEFS[localState.visaType] || STEP_DEFS.f1;
