@@ -18,6 +18,7 @@
   };
 
   async function callLLM(provider, model, apiKey, prompt, opts){
+    opts = opts || {};
     var cfg = PROVIDERS[provider];
     var url = cfg.baseUrl + cfg.chatPath;
     var headers = { "Content-Type": "application/json" };
@@ -27,7 +28,7 @@
     } else if (cfg.native === "anthropic"){
       headers["x-api-key"] = apiKey;
       headers["anthropic-version"] = "2023-06-01";
-      body = { model: model, max_tokens: 1024, system: "Extract job-posting details accurately and return only the requested JSON.", messages: [{ role: "user", content: prompt }] };
+      body = { model: model, max_tokens: 1024, system: opts.system || "Follow the user's instructions exactly and respond only in the exact format requested.", messages: [{ role: "user", content: prompt }] };
     } else if (cfg.native === "gemini"){
       url = cfg.baseUrl + "/v1beta/models/" + encodeURIComponent(model) + ":generateContent";
       headers["x-goog-api-key"] = apiKey;
@@ -37,7 +38,6 @@
       body = { model: model, messages: [{ role: "user", content: prompt }], temperature: 0 };
     }
 
-    opts = opts || {};
     var controller = typeof AbortController !== 'undefined' && opts.timeoutMs ? new AbortController() : null;
     var timer = controller ? setTimeout(function(){ controller.abort(); }, opts.timeoutMs) : null;
     var res;

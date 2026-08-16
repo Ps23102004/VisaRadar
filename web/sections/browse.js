@@ -15,6 +15,12 @@
     return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  function stripCodeFence(raw){
+    var trimmed = String(raw).trim();
+    var match = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+    return match ? match[1].trim() : trimmed;
+  }
+
   function constraintPrompt(query, strict){
     return (strict ? "Return ONLY the JSON object, no other text, no markdown code fences.\n\n" : "") +
       "You extract structured constraints for a US employer search. Return ONLY a JSON object (raw JSON, no markdown code fences and no explanation) with this exact possible shape:\n" +
@@ -31,7 +37,7 @@
   function rankingPrompt(query, candidates){
     return "Rank the best employer matches for the user's query using ONLY the candidate list below. Pick 5-8 matches and give one concise sentence explaining each choice. Return ONLY a raw JSON array with this exact shape, with no markdown code fences or other text:\n" +
       "[{\"k\":\"<exact key from the candidate list>\",\"reason\":\"<one-sentence reason>\"}]\n\n" +
-      "Only pick companies from the list given — do not invent or reference any company not in this list. Copy each k exactly. Do not put company names or keys inside the reason unless they appear in the candidate list.\n\n" +
+      "Only pick companies from the list given — do not invent or reference any company not in this list. Copy each k exactly. Do not put company names or keys inside the reason unless they appear in the candidate list. In each reason, describe only the company being recommended — do not name, mention, or compare to any other company.\n\n" +
       "User query:\n" + query + "\n\n" +
       "Candidate list:\n" + JSON.stringify(candidates.map(function(e){
         return { k: e.k, n: e.n, s: e.s, w: e.w, l: e.l };
@@ -71,7 +77,7 @@
   }
 
   function parseConstraints(raw){
-    return normalizeConstraints(JSON.parse(raw.trim()));
+    return normalizeConstraints(JSON.parse(stripCodeFence(raw)));
   }
 
   function topByWage(employers){
@@ -95,7 +101,7 @@
   }
 
   function validateRanking(raw, candidates){
-    var parsed = JSON.parse(raw.trim());
+    var parsed = JSON.parse(stripCodeFence(raw));
     if (!Array.isArray(parsed)) throw new Error('ranking must be an array');
     var candidateByKey = Object.create(null);
     var seen = Object.create(null);
@@ -203,7 +209,7 @@
       try {
         var rawConstraints = await VisaRadarLLM.callLLM(
           configured.provider, configured.model, configured.apiKey, constraintPrompt(query, false),
-          { timeoutMs: REQUEST_TIMEOUT_MS }
+          { timeoutMs: REQUEST_TIMEOUT_MS, system: "Extract structured search filters from the user's query and return only the requested JSON." }
         );
         var constraints;
         try {
@@ -211,7 +217,7 @@
         } catch (firstParseError){
           var retryRaw = await VisaRadarLLM.callLLM(
             configured.provider, configured.model, configured.apiKey, constraintPrompt(query, true),
-            { timeoutMs: REQUEST_TIMEOUT_MS }
+            { timeoutMs: REQUEST_TIMEOUT_MS, system: "Extract structured search filters from the user's query and return only the requested JSON." }
           );
           try {
             constraints = parseConstraints(retryRaw);
@@ -225,7 +231,7 @@
         setAIStatus('Ranking grounded matches…', false);
         var rawRanking = await VisaRadarLLM.callLLM(
           configured.provider, configured.model, configured.apiKey, rankingPrompt(query, filtered.candidates),
-          { timeoutMs: REQUEST_TIMEOUT_MS }
+          { timeoutMs: REQUEST_TIMEOUT_MS, system: "Rank the given real companies against the user's query and return only the requested JSON, using only companies from the provided list." }
         );
         var ranked = [];
         try { ranked = validateRanking(rawRanking, filtered.candidates); } catch (rankingParseError){ ranked = []; }
