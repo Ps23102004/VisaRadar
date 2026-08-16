@@ -86,13 +86,13 @@ nav.nav-links a[aria-current="page"]{
 
 /* ---------- Search input (reusable — Check's company search reuses this) ---------- */
 .search-wrap{ position: relative; }
-.search-wrap .glass{
+.search-wrap.glass, .search-wrap .glass{
   padding: 16px 18px 16px 50px;
   display: flex;
   align-items: center;
   transition: box-shadow .3s cubic-bezier(0.16,1,0.3,1), border-color .3s cubic-bezier(0.16,1,0.3,1), background .3s cubic-bezier(0.16,1,0.3,1);
 }
-.search-wrap:focus-within .glass{
+.search-wrap:focus-within.glass, .search-wrap:focus-within .glass{
   border-color: var(--accent);
   box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 0 3px var(--accent-soft);
   background: var(--glass-strong);
