@@ -64,6 +64,14 @@
         }
       };
 
+      window.appState.subscribe(function(newState){
+        Object.keys(registry).forEach(function(id){
+          if (registry[id]._mounted && typeof registry[id].onFilterChange === 'function'){
+            registry[id].onFilterChange(newState);
+          }
+        });
+      });
+
       document.querySelectorAll('.tab-btn').forEach(function(btn){
         btn.addEventListener('click', function(){ AppShell.showSection(btn.dataset.section); });
       });

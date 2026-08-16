@@ -7,6 +7,8 @@
     return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  var onFilterChange = function(){};
+
   function mount(container, state){
     container.innerHTML =
       '<section class="search-wrap glass fade-in" aria-label="Search employers">' +
@@ -44,7 +46,15 @@
     });
 
     searchEl.value = state.get().company || '';
+
+    onFilterChange = function(newState){
+      var company = newState.company || '';
+      if (company !== searchEl.value){
+        searchEl.value = company;
+        renderResults();
+      }
+    };
   }
 
-  window.AppShell.registerSection('browse', { mount: mount });
+  window.AppShell.registerSection('browse', { mount: mount, onFilterChange: function(newState){ onFilterChange(newState); } });
 })();
