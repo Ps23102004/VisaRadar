@@ -67,6 +67,8 @@ A self-contained, zero-dependency multi-page site in `web/` — no server needed
 - **`browse.html`** — search and filter all 67,722 employers in the bundled dataset by company name or state (e.g. "CA"), right in the browser.
 - **`check.html`** — paste `radar check --json` output, see it rendered as a result card.
 - **`byok.html`** — no CLI install needed: pick a provider (or local Ollama, no key), paste your API key, paste a posting, and it calls the LLM directly from the browser. Your key never leaves local storage except to the provider you chose.
+- **`journey.html`** — a personal step-by-step tracker for the weeks between an offer and a visa in hand (documents, SEVIS fee, DS-160, interview, decision). Self-reported checkboxes only — no payments processed, no forms filed, nothing sent anywhere. Progress is saved in your browser's local storage, so it survives the real multi-week timeline.
+- **`checklist.html`** — real F-1/J-1 document checklists and SEVIS fee amounts ($350 / $220), sourced and cited from travel.state.gov and ice.gov, not a blog's guess. Explicitly does not include "sample interview questions" — the State Department publishes none, and VisaRadar won't fabricate them for something this high-stakes to get wrong. Links out to the official SEVP school search and J-1 sponsor list rather than claiming bulk coverage that doesn't publicly exist.
 - **`install.html`** / **`mcp.html`** — CLI reference and MCP setup instructions.
 
 ### MCP
