@@ -7,3 +7,5 @@ dist/
 
 .impeccable/
 web/employers.json
+
+.worktrees/
