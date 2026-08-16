@@ -196,6 +196,16 @@
 
       var findEl = aiContentEl.querySelector('#ask-ai-find');
       if (findEl) findEl.addEventListener('click', runAISearch);
+
+      var queryElForSubmit = aiContentEl.querySelector('#ask-ai-query');
+      if (queryElForSubmit){
+        queryElForSubmit.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' && !e.shiftKey){
+            e.preventDefault();
+            runAISearch();
+          }
+        });
+      }
     }
 
     function setAIStatus(message, isError){

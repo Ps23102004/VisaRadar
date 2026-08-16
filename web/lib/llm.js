@@ -12,6 +12,7 @@
     openrouter: { baseUrl: "https://openrouter.ai/api/v1", chatPath: "/chat/completions", needsKey: true, native: "openai" },
     openai:     { baseUrl: "https://api.openai.com/v1", chatPath: "/chat/completions", needsKey: true, native: "openai" },
     anthropic:  { baseUrl: "https://api.anthropic.com", chatPath: "/v1/messages", needsKey: true, native: "anthropic" },
+    zai:        { baseUrl: "https://api.z.ai/api/anthropic", chatPath: "/v1/messages", needsKey: true, native: "anthropic" },
     gemini:     { baseUrl: "https://generativelanguage.googleapis.com", needsKey: true, native: "gemini" },
     groq:       { baseUrl: "https://api.groq.com/openai/v1", chatPath: "/chat/completions", needsKey: true, native: "openai" },
     together:   { baseUrl: "https://api.together.xyz/v1", chatPath: "/chat/completions", needsKey: true, native: "openai" }
