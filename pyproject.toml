@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "visaradar"
+version = "0.1.0"
+requires-python = ">=3.9"
+dependencies = [
+    "typer",
+    "rich",
+    "requests",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+update = ["openpyxl"]
+
+[project.scripts]
+radar = "visaradar.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["visaradar"]
+include = [
+    "visaradar/*",
+    "visaradar/providers.yaml",
+    "visaradar/lca_snapshot.jsonl.gz",
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "visaradar/*",
+    "visaradar/providers.yaml",
+    "visaradar/lca_snapshot.jsonl.gz",
+]
