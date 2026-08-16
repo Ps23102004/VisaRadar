@@ -40,18 +40,19 @@
     var controller = typeof AbortController !== 'undefined' && opts.timeoutMs ? new AbortController() : null;
     var timer = controller ? setTimeout(function(){ controller.abort(); }, opts.timeoutMs) : null;
     var res;
+    var data;
     try {
       var request = { method: "POST", headers: headers, body: JSON.stringify(body) };
       if (controller) request.signal = controller.signal;
       res = await fetch(url, request);
+      if (!res.ok) throw new Error("provider returned " + res.status);
+      data = await res.json();
     } catch (error){
       if (error && error.name === 'AbortError') throw new Error("request timed out");
       throw error;
     } finally {
       if (timer) clearTimeout(timer);
     }
-    if (!res.ok) throw new Error("provider returned " + res.status);
-    var data = await res.json();
     var content;
     if (cfg.native === "ollama") content = data.message && data.message.content;
     else if (cfg.native === "anthropic") content = data.content && data.content[0] && data.content[0].text;
