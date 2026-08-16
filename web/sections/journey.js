@@ -50,6 +50,9 @@
 
   function mount(container, appState){
     container.innerHTML =
+      '<div style="display:flex; justify-content:flex-end; margin-bottom:12px;">' +
+        '<button id="journey-reset" type="button" style="font:inherit; font-size:13px; color:var(--ink-soft); background:transparent; border:1px solid rgba(0,0,0,0.12); border-radius:8px; padding:7px 10px; cursor:pointer;">Start over</button>' +
+      '</div>' +
       '<p style="font-size:13px; color:var(--ink-soft); padding:10px 14px; background:rgba(255,149,0,0.08); border-radius:10px; border:1px solid rgba(255,149,0,0.2); margin-bottom:20px;">' +
         'This page makes zero network calls. Your progress is saved only in this browser (localStorage).</p>' +
       '<div class="progress-wrap" style="margin-bottom:20px;">' +
@@ -70,6 +73,7 @@
     var labelEl = container.querySelector('#journey-label');
     var barEl = container.querySelector('#journey-bar');
     var celebrateEl = container.querySelector('#journey-celebrate');
+    var resetBtn = container.querySelector('#journey-reset');
 
     var visaKey = VISA_KEY_MAP[appState.get().visaType] || 'f1';
     var stored = loadState() || { visaType: visaKey, steps: {} };
@@ -92,6 +96,7 @@
 
         var btn = document.createElement("button");
         btn.type = "button";
+        btn.setAttribute("aria-label", (stepState.done ? "Mark incomplete: " : "Mark complete: ") + def.title);
         btn.style.cssText = "flex:none; width:26px; height:26px; border-radius:50%; border:2px solid " +
           (stepState.done ? "var(--strong)" : "rgba(0,0,0,0.15)") + "; background:" + (stepState.done ? "var(--strong)" : "transparent") +
           "; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;";
@@ -118,6 +123,19 @@
           li.appendChild(desc);
         }
 
+        var note = document.createElement("input");
+        note.type = "text";
+        note.className = "step-note";
+        note.placeholder = "Optional note (e.g. confirmation number, date)";
+        note.value = stepState.note || "";
+        note.style.cssText = "margin-left:40px; width:calc(100% - 40px); box-sizing:border-box; font:inherit; font-size:13px; color:inherit; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:8px; padding:7px 10px; outline:none;";
+        note.addEventListener("input", function(){
+          stepState.note = note.value;
+          localState.steps[def.id] = stepState;
+          saveState(localState);
+        });
+        li.appendChild(note);
+
         stagesEl.appendChild(li);
       });
 
@@ -138,6 +156,12 @@
         saveState(localState);
         render();
       }
+    });
+
+    resetBtn.addEventListener("click", function(){
+      localState = { visaType: localState.visaType, steps: {} };
+      saveState(localState);
+      render();
     });
 
     render();
