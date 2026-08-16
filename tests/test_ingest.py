@@ -57,3 +57,21 @@ def test_aggregate_multi_year_separated():
 
 def test_aggregate_empty_input():
     assert aggregate([]) == {}
+
+
+def test_aggregate_states_ranked_by_frequency():
+    rows = [
+        LCARow(employer_name="Acme", case_status="Certified", fiscal_year="2024", job_title="Eng", worksite_state="CA"),
+        LCARow(employer_name="Acme", case_status="Certified", fiscal_year="2024", job_title="Eng", worksite_state="CA"),
+        LCARow(employer_name="Acme", case_status="Certified", fiscal_year="2024", job_title="Eng", worksite_state="NY"),
+    ]
+    result = aggregate(rows)
+    assert result["ACME"]["states"] == ["CA", "NY"]
+
+
+def test_aggregate_missing_state_does_not_crash():
+    rows = [
+        LCARow(employer_name="Acme", case_status="Certified", fiscal_year="2024", job_title="Eng"),
+    ]
+    result = aggregate(rows)
+    assert result["ACME"]["states"] == []

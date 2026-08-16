@@ -30,6 +30,7 @@ def read_rows(path: Path, fiscal_year: str) -> list[LCARow]:
     for col in required:
         if col not in idx:
             raise ValueError(f"{path.name}: missing expected column {col}")
+    state_col = idx.get("WORKSITE_STATE") or idx.get("EMPLOYER_STATE")
 
     rows: list[LCARow] = []
     for values in ws.iter_rows(min_row=2, values_only=True):
@@ -41,12 +42,14 @@ def read_rows(path: Path, fiscal_year: str) -> list[LCARow]:
         job_title = values[idx["JOB_TITLE"]]
         if not employer_name or not case_status:
             continue
+        worksite_state = values[state_col] if state_col is not None else None
         rows.append(
             LCARow(
                 employer_name=str(employer_name),
                 case_status=str(case_status),
                 fiscal_year=fiscal_year,
                 job_title=str(job_title) if job_title else "",
+                worksite_state=str(worksite_state).strip().upper() if worksite_state else "",
             )
         )
     wb.close()

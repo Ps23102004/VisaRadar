@@ -60,9 +60,22 @@ radar history --limit 10
 
 Every check is logged to `~/.visaradar/history.jsonl`, and — unless you pass `--no-notes` — also written as a Markdown note with frontmatter to `~/.visaradar/notes/`. Point `--data-dir` (or `VISARADAR_DATA_DIR`) at a folder inside your own Obsidian vault and every lookup just shows up there as a normal note. VisaRadar never deletes or prunes; retention is entirely yours.
 
-### Web viewer
+### Web
 
-`web/visaradar.html` is a self-contained, zero-dependency page — paste any `radar check --json` output and it renders a result card. Open it directly in a browser, no server needed.
+A self-contained, zero-dependency multi-page site in `web/` — no server needed, just open the HTML files:
+
+- **`browse.html`** — search and filter all 67,722 employers in the bundled dataset by company name or state (e.g. "CA"), right in the browser.
+- **`check.html`** — paste `radar check --json` output, see it rendered as a result card.
+- **`byok.html`** — no CLI install needed: pick a provider (or local Ollama, no key), paste your API key, paste a posting, and it calls the LLM directly from the browser. Your key never leaves local storage except to the provider you chose.
+- **`install.html`** / **`mcp.html`** — CLI reference and MCP setup instructions.
+
+### MCP
+
+```bash
+pip install -e ".[mcp]"
+```
+
+Exposes `visaradar_company` (direct lookup, no LLM) and `visaradar_check` (full extraction pipeline) as MCP tools — attach VisaRadar to Claude Desktop, Claude Code, or any MCP client. See `web/mcp.html` for config.
 
 ## Why this exists
 

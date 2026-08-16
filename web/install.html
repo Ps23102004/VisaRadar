@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Install — VisaRadar</title>
+<style>
+  :root{
+    --mx: 50%; --my: 50%;
+    --accent: #FF9500;
+  }
+  *{ box-sizing: border-box; }
+  html, body{ margin: 0; padding: 0; }
+  body{
+    min-height: 100vh;
+    background: #FBFBFD;
+    background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.08), transparent 60%);
+    background-attachment: fixed;
+    color: #0A0A0C;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage{ max-width: 720px; margin: 0 auto; padding: 40px 22px 128px; }
+  nav{ display: flex; gap: 24px; align-items: center; margin-bottom: 48px; font-size: 14px; }
+  nav .logo{ font-weight: 700; font-size: 16px; margin-right: auto; }
+  nav a{ color: rgba(10,10,12,0.6); text-decoration: none; }
+  nav a:hover{ color: #0A0A0C; }
+  nav a.current{ color: #0A0A0C; font-weight: 600; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+  h1{ font-size: 34px; font-weight: 600; letter-spacing: -0.03em; margin: 0 0 8px; }
+  .tagline{ font-size: 16px; color: rgba(10,10,12,0.6); margin: 0 0 40px; }
+  h2{ font-size: 20px; font-weight: 600; margin: 40px 0 12px; }
+  p{ font-size: 15px; line-height: 1.6; color: rgba(10,10,12,0.78); }
+  .glass{
+    position: relative; overflow: hidden;
+    background: rgba(255,255,255,0.55);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.55);
+  }
+  pre{
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 13px; line-height: 1.6;
+    padding: 18px 20px; margin: 12px 0 20px;
+    overflow-x: auto; white-space: pre;
+    color: #0A0A0C;
+  }
+  code{ font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 0.9em; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 5px; }
+  .comment{ color: rgba(10,10,12,0.4); }
+  table{ width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th{ text-align: left; padding: 10px 12px; color: rgba(10,10,12,0.5); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid rgba(0,0,0,0.08); }
+  td{ padding: 10px 12px; border-bottom: 1px solid rgba(0,0,0,0.06); vertical-align: top; }
+  td code{ white-space: nowrap; }
+
+  @media (prefers-color-scheme: dark){
+    body{ color: #F5F5F7; background: #000000; background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.14), transparent 62%); }
+    nav a{ color: rgba(245,245,247,0.6); }
+    nav a:hover, nav a.current{ color: #F5F5F7; }
+    .tagline, p{ color: rgba(245,245,247,0.7); }
+    .glass{ background: rgba(28,28,30,0.55); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06); }
+    pre{ color: #F5F5F7; }
+    code{ background: rgba(255,255,255,0.08); }
+    .comment{ color: rgba(245,245,247,0.35); }
+    th{ color: rgba(245,245,247,0.5); border-bottom-color: rgba(255,255,255,0.1); }
+    td{ border-bottom-color: rgba(255,255,255,0.08); }
+  }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <nav>
+      <span class="logo">VisaRadar</span>
+      <a href="browse.html">Browse</a>
+      <a href="check.html">Check</a>
+      <a href="byok.html">Bring your key</a>
+      <a href="install.html" class="current">Install</a>
+      <a href="mcp.html">MCP</a>
+    </nav>
+
+    <h1>Install &amp; use the CLI</h1>
+    <p class="tagline">The web pages here are a companion viewer. The real tool is a local Python CLI.</p>
+
+    <h2>Install</h2>
+    <div class="glass"><pre><span class="comment"># clone the repo, then:</span>
+pip install -e .
+
+<span class="comment"># or, if you want the historical-data rebuild tooling too:</span>
+pip install -e ".[update]"</pre></div>
+
+    <h2>Prerequisite: an LLM backend</h2>
+    <p>Local (free, default): <a href="https://ollama.com/" style="color:var(--accent)">Ollama</a> running at <code>127.0.0.1:11434</code> with a model pulled. Or any OpenAI-compatible API — OpenRouter, Groq, Together, LM Studio, vLLM, OpenAI itself.</p>
+
+    <h2>Commands</h2>
+    <div class="glass">
+      <table>
+        <tr><th>Command</th><th>What it does</th></tr>
+        <tr><td><code>radar check "&lt;posting&gt;"</code></td><td>Full pipeline: LLM extraction + real filing-data match</td></tr>
+        <tr><td><code>radar check --file posting.txt</code></td><td>Same, reading the posting from a file</td></tr>
+        <tr><td><code>radar check --url https://...</code></td><td>Same, fetching the posting from a URL</td></tr>
+        <tr><td><code>radar company "Google"</code></td><td>Direct lookup, no LLM call at all</td></tr>
+        <tr><td><code>radar config</code></td><td>Show resolved provider, data dir, snapshot info</td></tr>
+        <tr><td><code>radar history</code></td><td>Show your recent check history</td></tr>
+      </table>
+    </div>
+
+    <h2>Use any provider</h2>
+    <div class="glass"><pre>radar check "..." --model openrouter/google/gemini-3.7-flash
+<span class="comment"># export the provider's key first:</span>
+export OPENROUTER_API_KEY=...</pre></div>
+
+    <h2>Local-first storage</h2>
+    <p>Every check is logged to <code>~/.visaradar/history.jsonl</code>, and written as a Markdown note to <code>~/.visaradar/notes/</code>. Point <code>--data-dir</code> at a folder inside your own Obsidian vault and lookups show up there as normal notes.</p>
+
+    <h2>Full docs</h2>
+    <p>See the <a href="https://github.com/Ps23102004/VisaRadar" style="color:var(--accent)">README on GitHub</a> for the complete reference.</p>
+  </main>
+
+  <script>
+    document.addEventListener('mousemove', function(e){
+      document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+      document.documentElement.style.setProperty('--my', e.clientY + 'px');
+    }, { passive: true });
+  </script>
+</body>
+</html>

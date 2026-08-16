@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>MCP — VisaRadar</title>
+<style>
+  :root{ --mx: 50%; --my: 50%; --accent: #FF9500; }
+  *{ box-sizing: border-box; }
+  html, body{ margin: 0; padding: 0; }
+  body{
+    min-height: 100vh;
+    background: #FBFBFD;
+    background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.08), transparent 60%);
+    background-attachment: fixed;
+    color: #0A0A0C;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage{ max-width: 720px; margin: 0 auto; padding: 40px 22px 128px; }
+  nav{ display: flex; gap: 24px; align-items: center; margin-bottom: 48px; font-size: 14px; }
+  nav .logo{ font-weight: 700; font-size: 16px; margin-right: auto; }
+  nav a{ color: rgba(10,10,12,0.6); text-decoration: none; }
+  nav a:hover{ color: #0A0A0C; }
+  nav a.current{ color: #0A0A0C; font-weight: 600; border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+  h1{ font-size: 34px; font-weight: 600; letter-spacing: -0.03em; margin: 0 0 8px; }
+  .tagline{ font-size: 16px; color: rgba(10,10,12,0.6); margin: 0 0 40px; }
+  h2{ font-size: 20px; font-weight: 600; margin: 40px 0 12px; }
+  p{ font-size: 15px; line-height: 1.6; color: rgba(10,10,12,0.78); }
+  .glass{
+    position: relative; overflow: hidden;
+    background: rgba(255,255,255,0.55);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.55);
+  }
+  pre{
+    font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 13px; line-height: 1.6;
+    padding: 18px 20px; margin: 12px 0 20px;
+    overflow-x: auto; white-space: pre;
+    color: #0A0A0C;
+  }
+  code{ font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 0.9em; background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 5px; }
+  .comment{ color: rgba(10,10,12,0.4); }
+  .badge{ display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 11px; border-radius: 999px; background: rgba(255,149,0,0.14); color: var(--accent); margin-bottom: 4px; }
+  .tool{ margin: 8px 0 24px; }
+  .tool code.name{ font-size: 15px; font-weight: 600; background: none; padding: 0; color: var(--accent); }
+
+  @media (prefers-color-scheme: dark){
+    body{ color: #F5F5F7; background: #000000; background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.14), transparent 62%); }
+    nav a{ color: rgba(245,245,247,0.6); }
+    nav a:hover, nav a.current{ color: #F5F5F7; }
+    .tagline, p{ color: rgba(245,245,247,0.7); }
+    .glass{ background: rgba(28,28,30,0.55); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06); }
+    pre{ color: #F5F5F7; }
+    code{ background: rgba(255,255,255,0.08); }
+    .comment{ color: rgba(245,245,247,0.35); }
+  }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <nav>
+      <span class="logo">VisaRadar</span>
+      <a href="browse.html">Browse</a>
+      <a href="check.html">Check</a>
+      <a href="byok.html">Bring your key</a>
+      <a href="install.html">Install</a>
+      <a href="mcp.html" class="current">MCP</a>
+    </nav>
+
+    <h1>Attach VisaRadar to your AI agent</h1>
+    <p class="tagline">VisaRadar ships an MCP server, so Claude, or any MCP-compatible client, can call it directly as a tool.</p>
+
+    <h2>Install</h2>
+    <div class="glass"><pre>pip install -e ".[mcp]"</pre></div>
+
+    <h2>Configure your client</h2>
+    <p>Add to your MCP client's config (e.g. Claude Desktop's <code>claude_desktop_config.json</code>, or Claude Code's <code>.mcp.json</code>):</p>
+    <div class="glass"><pre>{
+  "mcpServers": {
+    "visaradar": {
+      "command": "visaradar-mcp"
+    }
+  }
+}</pre></div>
+    <p>If it's not on your PATH, point at the venv directly instead:</p>
+    <div class="glass"><pre>{
+  "mcpServers": {
+    "visaradar": {
+      "command": "/path/to/VisaRadar/.venv/bin/visaradar-mcp"
+    }
+  }
+}</pre></div>
+
+    <h2>Tools it exposes</h2>
+    <div class="glass" style="padding: 22px;">
+      <div class="tool">
+        <span class="badge">tool</span><br>
+        <code class="name">visaradar_company(name)</code>
+        <p style="margin:6px 0 0">Direct lookup against real DOL filing history. No LLM call, no posting text needed.</p>
+      </div>
+      <div class="tool" style="margin-bottom:0">
+        <span class="badge">tool</span><br>
+        <code class="name">visaradar_check(posting_text, model?)</code>
+        <p style="margin:6px 0 0">Extracts company/title/sponsorship-stance from a job posting via an LLM, then cross-references the real filing data. Uses your configured provider, or pass <code>model</code> to override for that call.</p>
+      </div>
+    </div>
+
+    <h2>Why this matters</h2>
+    <p>Once attached, an agent doing job-search help for you can just call <code>visaradar_company</code> mid-conversation — no copy-pasting CLI output back and forth.</p>
+  </main>
+
+  <script>
+    document.addEventListener('mousemove', function(e){
+      document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+      document.documentElement.style.setProperty('--my', e.clientY + 'px');
+    }, { passive: true });
+  </script>
+</body>
+</html>

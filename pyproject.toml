@@ -15,9 +15,11 @@ dependencies = [
 
 [project.optional-dependencies]
 update = ["openpyxl"]
+mcp = ["mcp"]
 
 [project.scripts]
 radar = "visaradar.cli:app"
+visaradar-mcp = "visaradar.mcp_server:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["visaradar"]

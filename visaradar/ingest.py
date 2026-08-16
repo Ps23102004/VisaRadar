@@ -11,18 +11,22 @@ class LCARow:
     case_status: str
     fiscal_year: str
     job_title: str
+    worksite_state: str = ""
 
 
 def aggregate(rows: list[LCARow]) -> dict[str, dict]:
     normalized_groups: dict[str, list[LCARow]] = {}
     original_names: dict[str, list[str]] = {}
     job_titles_by_employer: dict[str, list[str]] = {}
+    states_by_employer: dict[str, list[str]] = {}
 
     for row in rows:
         norm = normalize_name(row.employer_name)
         normalized_groups.setdefault(norm, []).append(row)
         original_names.setdefault(norm, []).append(row.employer_name)
         job_titles_by_employer.setdefault(norm, []).append(row.job_title)
+        if row.worksite_state:
+            states_by_employer.setdefault(norm, []).append(row.worksite_state)
 
     result: dict[str, dict] = {}
 
@@ -44,12 +48,15 @@ def aggregate(rows: list[LCARow]) -> dict[str, dict]:
         title_counter = Counter(job_titles_by_employer[norm])
         top_titles = [title for title, _ in title_counter.most_common(5)]
 
+        state_counter = Counter(states_by_employer.get(norm, []))
+        states = [state for state, _ in state_counter.most_common()]
+
         result[norm] = {
             "name": norm,
             "display_name": display_name,
             "by_fy": by_fy,
             "top_titles": top_titles,
-            "states": [],
+            "states": states,
         }
 
     return result
