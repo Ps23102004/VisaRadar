@@ -118,7 +118,7 @@ nav.nav-links a[aria-current="page"]{
 .search-input::placeholder{ color: var(--ink-soft); opacity: .8; }
 
 /* ---------- Native control chrome reset (closes the "blue" gap) ---------- */
-select, input[type="text"], input[type="search"]{
+input[type="text"], input[type="search"]{
   appearance: none;
   -webkit-appearance: none;
   font: inherit;
@@ -130,10 +130,16 @@ select, input[type="text"], input[type="search"]{
   outline: none;
 }
 select{
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%230A0A0C' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  background: rgba(0,0,0,0.03) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%230A0A0C' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 8px 12px 8px 12px;
   padding-right: 30px;
+  outline: none;
 }
 select:focus-visible, input:focus-visible, button:focus-visible{
   outline: 2px solid var(--accent);
