@@ -156,10 +156,6 @@
       window.open(page ? RECIPROCITY_BASE + page : RECIPROCITY_INDEX, '_blank', 'noopener,noreferrer');
       e.target.selectedIndex = 0;
     });
-    document.addEventListener('mousemove', function(e){
-      document.documentElement.style.setProperty('--mx', e.clientX + 'px');
-      document.documentElement.style.setProperty('--my', e.clientY + 'px');
-    }, { passive: true });
   </script>
   <script src="lib/nav.js"></script>
   <script>VisaRadarNav.mountNav('guide.html');</script>

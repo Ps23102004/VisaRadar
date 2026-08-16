@@ -15,6 +15,7 @@
     { href: 'install.html',       label: 'Install' },
     { href: 'mcp.html',           label: 'MCP' }
   ];
+  var pointerTrackingAttached = false;
 
   function renderNav(currentHref){
     var links = NAV_LINKS.map(function(l){
@@ -33,6 +34,13 @@
   function mountNav(currentHref){
     var mount = document.querySelector('.nav-mount');
     if (mount) mount.innerHTML = renderNav(currentHref);
+    if (!pointerTrackingAttached){
+      pointerTrackingAttached = true;
+      document.addEventListener('mousemove', function(e){
+        document.documentElement.style.setProperty('--mx', e.clientX + 'px');
+        document.documentElement.style.setProperty('--my', e.clientY + 'px');
+      }, { passive: true });
+    }
   }
 
   return { NAV_LINKS: NAV_LINKS, renderNav: renderNav, mountNav: mountNav };
