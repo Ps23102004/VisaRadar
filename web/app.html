@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>VisaRadar</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  .stage{ width: 100%; max-width: 720px; margin: 0 auto; padding: 24px 22px 128px; display: flex; flex-direction: column; gap: 28px; }
+  .tabs{ display: flex; gap: 8px; }
+  .tab-btn{ font: inherit; font-size: 14px; font-weight: 600; padding: 8px 18px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.1); background: rgba(0,0,0,0.03); color: var(--ink-soft); cursor: pointer; }
+  .tab-btn.active{ background: var(--accent); border-color: var(--accent); color: #fff; }
+  .app-section{ display: none; }
+  .app-section.active{ display: block; }
+  @media (prefers-color-scheme: dark){
+    .tab-btn{ background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+  }
+</style>
+</head>
+<body>
+  <div class="nav-mount"></div>
+  <main class="stage">
+    <div class="tabs" role="tablist">
+      <button class="tab-btn" data-section="browse" type="button" role="tab">Browse</button>
+      <button class="tab-btn" data-section="check" type="button" role="tab">Check</button>
+      <button class="tab-btn" data-section="checklist" type="button" role="tab">Checklist</button>
+      <button class="tab-btn" data-section="journey" type="button" role="tab">My Journey</button>
+    </div>
+    <section id="section-browse" class="app-section"></section>
+    <section id="section-check" class="app-section"></section>
+    <section id="section-checklist" class="app-section"></section>
+    <section id="section-journey" class="app-section"></section>
+  </main>
+
+  <script src="lib/nav.js"></script>
+  <script src="lib/state.js"></script>
+  <script>
+    (function(){
+      "use strict";
+      window.appState = VisaRadarState.createState({ company: '', state: '', country: '', visaType: 'F-1' });
+
+      var SECTIONS = ['browse', 'check', 'checklist', 'journey'];
+      var registry = {};
+
+      window.AppShell = {
+        registerSection: function(id, handlers){ registry[id] = handlers; },
+        showSection: function(id){
+          if (SECTIONS.indexOf(id) === -1) id = 'browse';
+          SECTIONS.forEach(function(s){
+            document.getElementById('section-' + s).classList.toggle('active', s === id);
+            document.querySelector('.tab-btn[data-section="' + s + '"]').classList.toggle('active', s === id);
+          });
+          location.hash = id;
+          if (registry[id] && !registry[id]._mounted){
+            registry[id]._mounted = true;
+            registry[id].mount(document.getElementById('section-' + id), window.appState);
+          }
+        }
+      };
+
+      document.querySelectorAll('.tab-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){ AppShell.showSection(btn.dataset.section); });
+      });
+
+      var employersPromise = fetch('employers.json').then(function(r){ return r.json(); });
+      window.employersPromise = employersPromise;
+
+      VisaRadarNav.mountNav('app.html#' + (location.hash.replace('#','') || 'browse'));
+
+      document.addEventListener('DOMContentLoaded', function(){
+        var initial = location.hash.replace('#', '') || 'browse';
+        AppShell.showSection(initial);
+      });
+    })();
+  </script>
+  <script src="lib/matcher.js"></script>
+  <script src="lib/checklist-data.js"></script>
+  <script src="sections/browse.js"></script>
+  <script src="sections/check.js"></script>
+  <script src="sections/checklist.js"></script>
+  <script src="sections/journey.js"></script>
+</body>
+</html>
