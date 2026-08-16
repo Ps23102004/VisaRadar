@@ -44,8 +44,8 @@ class OllamaClient(LLMClient):
             content = data["message"]["content"]
         except (KeyError, TypeError) as exc:
             raise LLMConnectionError("Response missing or empty 'message.content'") from exc
-        if not content:
-            raise LLMConnectionError("Response content is empty")
+        if not isinstance(content, str) or not content:
+            raise LLMConnectionError("Response 'message.content' was empty or not a string")
         return content
 
 
@@ -82,8 +82,8 @@ class OpenAICompatClient(LLMClient):
             content = data["choices"][0]["message"]["content"]
         except (KeyError, IndexError, TypeError) as exc:
             raise LLMConnectionError("Response missing or empty 'choices[0].message.content'") from exc
-        if not content:
-            raise LLMConnectionError("Response content is empty")
+        if not isinstance(content, str) or not content:
+            raise LLMConnectionError("Response 'choices[0].message.content' was empty or not a string")
         return content
 
 

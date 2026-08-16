@@ -8,6 +8,7 @@ from typing import Optional
 
 import typer
 from rich.console import Console
+from rich.markup import escape as rich_escape
 from rich.panel import Panel
 from rich.table import Table
 
@@ -50,7 +51,7 @@ def _render_result(
     json_out: bool,
 ) -> None:
     if json_out:
-        console.print(
+        print(
             json.dumps(
                 {
                     "company": company,
@@ -66,10 +67,13 @@ def _render_result(
         return
 
     color = _LABEL_COLORS.get(label, "white")
+    safe_company = rich_escape(str(company))
+    safe_title = rich_escape(str(title))
+    safe_location = rich_escape(str(location))
     lines = [
-        f"[bold cyan]{company}[/bold cyan]",
-        f"[bold cyan]{title}[/bold cyan]" if title else "",
-        f"[bold cyan]{location}[/bold cyan]" if location else "",
+        f"[bold cyan]{safe_company}[/bold cyan]",
+        f"[bold cyan]{safe_title}[/bold cyan]" if title else "",
+        f"[bold cyan]{safe_location}[/bold cyan]" if location else "",
         f"[bold {color}]LABEL: {label}[/bold {color}]",
     ]
     body = "\n".join(ln for ln in lines if ln)
@@ -77,7 +81,7 @@ def _render_result(
     console.print(panel)
 
     if fuzzy_warning:
-        console.print(f"[yellow]Warning:[/yellow] {fuzzy_warning}")
+        console.print(f"[yellow]Warning:[/yellow] {rich_escape(fuzzy_warning)}")
 
     if evidence:
         table = Table(title="Evidence", show_header=False, expand=True)
@@ -85,7 +89,7 @@ def _render_result(
         for item in evidence:
             stripped = str(item).strip()
             if stripped:
-                table.add_row(f"• {stripped}")
+                table.add_row(f"• {rich_escape(stripped)}")
         console.print(table)
 
 
@@ -145,21 +149,25 @@ def check(
         fuzzy_warning: Optional[str] = None
         if not candidates:
             record = None
-        elif candidates[0].score >= 0.999:
-            record = candidates[0].record
         else:
             record = candidates[0].record
-            fuzzy_warning = _fuzzy_warning_text(candidates)
+            if candidates[0].score < 0.999:
+                fuzzy_warning = _fuzzy_warning_text(candidates)
 
         result = score.assess(record, posting.stance)
+        if fuzzy_warning:
+            result.evidence.append(f"matched to: {record.display_name} (fuzzy match, not an exact name match)")
 
         storage.HistoryLedger(resolved_dir).record(
             posting.company, posting.title, result.label, result.evidence
         )
         if not no_notes:
-            storage.write_markdown_note(
-                resolved_dir, posting.company, posting.title, result.label, result.evidence
-            )
+            try:
+                storage.write_markdown_note(
+                    resolved_dir, posting.company, posting.title, result.label, result.evidence
+                )
+            except OSError as exc:
+                error_console.print(f"warning: recorded to history but could not write note file: {exc}")
 
         confidence = candidates[0].score if candidates else 0.0
         _render_result(
@@ -197,13 +205,14 @@ def company(
         fuzzy_warning: Optional[str] = None
         if not candidates:
             record = None
-        elif candidates[0].score >= 0.999:
-            record = candidates[0].record
         else:
             record = candidates[0].record
-            fuzzy_warning = _fuzzy_warning_text(candidates)
+            if candidates[0].score < 0.999:
+                fuzzy_warning = _fuzzy_warning_text(candidates)
 
         result = score.assess(record, "silent")
+        if fuzzy_warning:
+            result.evidence.append(f"matched to: {record.display_name} (fuzzy match, not an exact name match)")
 
         confidence = candidates[0].score if candidates else 0.0
         _render_result(
@@ -255,7 +264,7 @@ def history(
     entries = storage.HistoryLedger(resolved_dir).read_recent(limit=limit)
 
     if json_out:
-        console.print(json.dumps(entries, indent=2))
+        print(json.dumps(entries, indent=2))
         return
 
     table = Table(title="VisaRadar History")
@@ -268,8 +277,8 @@ def history(
         date_str = datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M") if ts else ""
         table.add_row(
             date_str,
-            entry.get("company", ""),
-            entry.get("title", ""),
+            rich_escape(str(entry.get("company", ""))),
+            rich_escape(str(entry.get("title", ""))),
             entry.get("label", ""),
         )
     console.print(table)

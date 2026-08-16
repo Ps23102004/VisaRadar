@@ -14,6 +14,17 @@ def test_normalize_collapses_whitespace_and_case():
     assert normalize_name("  IBM   Corporation  ") == "IBM"
 
 
+def test_normalize_llp_suffix_no_dangling_letter():
+    # Regression: "LP" suffix pattern used to have no word boundary, so it
+    # matched the tail of "LLP" too, leaving a stray "L" behind.
+    assert normalize_name("KPMG LLP") == "KPMG"
+    assert normalize_name("Deloitte LLP") == "DELOITTE"
+
+
+def test_normalize_lp_suffix_still_works_standalone():
+    assert normalize_name("Foo Bar LP") == "FOO BAR"
+
+
 def test_normalize_no_suffix_unchanged():
     assert normalize_name("Netflix") == "NETFLIX"
 

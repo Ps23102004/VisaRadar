@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
 import time
 from datetime import datetime
+
+import yaml
 
 
 def resolve_data_dir(cli_arg: str | None) -> str:
@@ -67,7 +70,8 @@ def write_markdown_note(
     date_str = datetime.now().strftime("%Y-%m-%d")
     slug = re.sub(r"[^a-z0-9]+", "-", company.lower()).strip("-")
     if not slug:
-        slug = "note"
+        slug = hashlib.sha256(company.encode("utf-8")).hexdigest()[:10]
+    slug = slug[:60]
     base_name = f"{date_str}-{slug}"
 
     candidate = os.path.join(notes_dir, base_name + ".md")
@@ -80,12 +84,14 @@ def write_markdown_note(
             idx += 1
 
     iso_date = datetime.now().date().isoformat()
+    frontmatter = yaml.safe_dump(
+        {"company": company, "title": title, "label": label, "date": iso_date},
+        default_flow_style=False,
+        sort_keys=False,
+    ).strip()
     lines: list[str] = [
         "---",
-        f"company: {company}",
-        f"title: {title}",
-        f"label: {label}",
-        f"date: {iso_date}",
+        frontmatter,
         "---",
         "",
         "## Evidence",

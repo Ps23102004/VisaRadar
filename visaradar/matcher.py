@@ -14,6 +14,7 @@ _SUFFIXES = [
     "LIMITED",
     "INC",
     "LLC",
+    "LLP",
     "CORP",
     "LTD",
     "CO",
@@ -27,11 +28,7 @@ def normalize_name(name: str) -> str:
     punct_removed = re.sub(r"[.,']", "", collapsed)
     stripped = punct_removed
     for suffix in _SUFFIXES:
-        suffix_upper = suffix
-        if suffix_upper == "LLC" or suffix_upper == "LP":
-            pattern = rf"{suffix_upper}$"
-        else:
-            pattern = rf"\b{suffix_upper}$"
+        pattern = rf"\b{suffix}$"
         if re.search(pattern, stripped):
             stripped = re.sub(pattern, "", stripped).strip()
             break

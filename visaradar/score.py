@@ -36,12 +36,13 @@ def assess(record: EmployerRecord | None, posting_stance: str) -> Assessment:
         prior_year = sorted_years[-2]
         most_recent_filings = record.by_fy[most_recent_year]["filings"]
         prior_filings = record.by_fy[prior_year]["filings"]
+        partial_year_note = " (note: the most recent fiscal year in this dataset may be partial, not a full-year figure)"
         if most_recent_filings > prior_filings:
-            trend_line = f"increasing filing volume from {prior_year} ({prior_filings}) to {most_recent_year} ({most_recent_filings})"
+            trend_line = f"increasing filing volume from {prior_year} ({prior_filings}) to {most_recent_year} ({most_recent_filings}){partial_year_note}"
         elif most_recent_filings < prior_filings:
-            trend_line = f"decreasing filing volume from {prior_year} ({prior_filings}) to {most_recent_year} ({most_recent_filings})"
+            trend_line = f"decreasing filing volume from {prior_year} ({prior_filings}) to {most_recent_year} ({most_recent_filings}){partial_year_note}"
         else:
-            trend_line = f"flat filing volume at {most_recent_filings} between {prior_year} and {most_recent_year}"
+            trend_line = f"flat filing volume at {most_recent_filings} between {prior_year} and {most_recent_year}{partial_year_note}"
 
     if total_filings >= 20:
         base_label = "strong"

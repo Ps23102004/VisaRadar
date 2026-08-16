@@ -71,9 +71,11 @@ def main() -> None:
     aggregated = aggregate(all_rows)
     print(f"  {len(aggregated)} unique employers", file=sys.stderr)
 
-    with gzip.open(out_path, "wt", encoding="utf-8") as f:
+    tmp_path = out_path.with_suffix(out_path.suffix + ".tmp")
+    with gzip.open(tmp_path, "wt", encoding="utf-8") as f:
         for record in aggregated.values():
             f.write(json.dumps(record) + "\n")
+    tmp_path.replace(out_path)
 
     size_mb = out_path.stat().st_size / (1024 * 1024)
     print(f"wrote {out_path} ({size_mb:.2f} MB)", file=sys.stderr)
