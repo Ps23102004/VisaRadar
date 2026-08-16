@@ -18,8 +18,19 @@
     together:   { baseUrl: "https://api.together.xyz/v1", chatPath: "/chat/completions", needsKey: true, native: "openai" }
   };
 
+  // HTTP header values must be Latin-1 (ISO-8859-1); a pasted API key carrying a stray
+  // non-ASCII character (smart quotes, zero-width spaces, and other copy-paste artifacts
+  // are common) throws a cryptic "Failed to read the 'headers' property... non ISO-8859-1
+  // code point" error from fetch() itself, before any request is even sent. Real API keys
+  // are always plain printable ASCII, so stripping anything outside that range is safe and
+  // fixes the common case (invisible paste artifacts) without altering a valid key.
+  function sanitizeApiKey(key){
+    return String(key || "").replace(/[^\x20-\x7E]/g, "");
+  }
+
   async function callLLM(provider, model, apiKey, prompt, opts){
     opts = opts || {};
+    apiKey = sanitizeApiKey(apiKey);
     var cfg = PROVIDERS[provider];
     var url = cfg.baseUrl + cfg.chatPath;
     var headers = { "Content-Type": "application/json" };
@@ -62,6 +73,9 @@
       data = await res.json();
     } catch (error){
       if (error && error.name === 'AbortError') throw new Error("request timed out");
+      if (error instanceof TypeError && /ISO-8859-1|code point/i.test(error.message || '')){
+        throw new Error("Your API key or model name contains an unusual character (often from copy-paste). Try deleting it and re-typing it, or paste into a plain text field first to strip formatting.");
+      }
       throw error;
     } finally {
       if (timer) clearTimeout(timer);
