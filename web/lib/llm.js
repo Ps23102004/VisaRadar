@@ -56,8 +56,20 @@
     }
     var content;
     if (cfg.native === "ollama") content = data.message && data.message.content;
-    else if (cfg.native === "anthropic") content = data.content && data.content[0] && data.content[0].text;
-    else if (cfg.native === "gemini") content = data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+    else if (cfg.native === "anthropic"){
+      // Thinking-capable models (e.g. GLM-5.3 via z.ai's Anthropic-compatible endpoint,
+      // and Claude's own extended-thinking models) return content[0] as a "thinking"
+      // block with no .text field -- the real answer is the first "text"-typed block.
+      var anthropicBlocks = Array.isArray(data.content) ? data.content : [];
+      var textBlock = anthropicBlocks.filter(function(b){ return b && b.type === "text"; })[0];
+      content = textBlock && textBlock.text;
+    } else if (cfg.native === "gemini"){
+      // Same failure class as Anthropic above: some Gemini models can return multiple
+      // parts with a "thought" part before the real answer -- skip thought parts.
+      var geminiParts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+      var geminiTextPart = geminiParts.filter(function(p){ return p && typeof p.text === "string" && !p.thought; })[0];
+      content = geminiTextPart && geminiTextPart.text;
+    }
     else content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
     if (!content || typeof content !== "string") throw new Error("empty response from provider");
     return content;
