@@ -365,6 +365,116 @@
     'H-1B': {
       fee: 'varies by employer',
       countries: Object.assign(placeholderCountries(), {
+        IN: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'No H-1B-specific consular requirements found beyond the standard documents; the embassy page is boilerplate.',
+          source: 'https://in.usembassy.gov/visas/important-visa-information/'
+        },
+        CN: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Set social media accounts to public for H-1B/H-4 vetting; no other H-1B-specific consular requirements were found beyond the standard documents.',
+          source: 'https://cn.usembassy.gov/visas/'
+        },
+        MX: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {
+            'Visa application fee receipt': 'Same-visa-class renewal where the prior visa expired within 12 months and may qualify for an interview waiver.'
+          },
+          notes: 'Same-visa-class renewals may qualify for an interview waiver when the prior visa expired within 12 months; apply in your country of nationality or usual residence, and allow roughly 8–10 weeks for Applicant Service Center processing.',
+          source: 'https://mx.usembassy.gov/visas/'
+        },
+        NG: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Set social media accounts to public for H-1B vetting; no other H-1B-specific consular requirements were found beyond the standard documents.',
+          source: 'https://ng.usembassy.gov/visas/'
+        },
+        PH: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'The offsite Visa Application Center at Parqal, Parañaque handles pre-interview fingerprinting, free passport pickup, 221(g) document drop-off, and interview-waiver submissions; no document requirement changes the H-1B baseline.',
+          source: 'https://ph.usembassy.gov/important-visa-information/'
+        },
+        BR: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'No H-1B-specific consular requirements found beyond the standard documents; the page covers only accessibility and fingerprint-waiver logistics.',
+          source: 'https://br.usembassy.gov/visas/important-visa-information/'
+        },
+        KR: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Some applicants may qualify for an interview waiver without appearing at the embassy; eligibility follows travel.state.gov’s general criteria, and no Korea-page H-1B-specific list was found.',
+          source: 'https://kr.usembassy.gov/visas/important-visa-information/'
+        },
+        CA: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Set social media accounts to public for H-1B vetting; otherwise no H-1B-specific consular requirements were found beyond the standard documents.',
+          source: 'https://ca.usembassy.gov/visas/'
+        },
+        GB: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'No H-1B-specific consular requirements found beyond the standard documents; the current embassy site has no H-1B-specific content.',
+          source: 'https://uk.usembassy.gov/visas-2/'
+        },
+        DE: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Set social media accounts to public for H-1B/H-4 vetting; no other H-1B-specific consular requirements were found beyond the standard documents.',
+          source: 'https://de.usembassy.gov/visas/'
+        },
+        VN: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'No H-1B-specific consular requirements found beyond the standard documents; the embassy page is boilerplate.',
+          source: 'https://vn.usembassy.gov/visas/important-visa-information/'
+        },
+        PK: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'From the MRV-fee payment date, applicants have 365 days to book an interview or submit an interview-waiver application; no document requirement changes the H-1B baseline.',
+          source: 'https://pk.usembassy.gov/nonimmigrant-visas/'
+        },
+        BD: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'No H-1B-specific consular requirements found beyond the standard documents; the embassy page is boilerplate.',
+          source: 'https://bd.usembassy.gov/visas/important-visa-information/'
+        },
+        CO: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'No H-1B-specific document requirements were found beyond the standard documents; Bogotá provides a dedicated nonimmigrant-visa appointment wait-times page for scheduling logistics.',
+          source: 'https://co.usembassy.gov/visas/bogota-nonimmigrant-visa-wait-times/'
+        },
+        UA: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Set social media accounts to public for visa vetting; no other H-1B-specific consular requirements were found beyond the standard documents.',
+          source: 'https://ua.usembassy.gov/visas/'
+        },
+        NP: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Set social media accounts to public for visa vetting; from the MRV-fee payment date, applicants have 365 days to book an interview or submit an interview-waiver application, with no document requirement changes to the H-1B baseline.',
+          source: 'https://np.usembassy.gov/visas/'
+        },
+        GH: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'No H-1B-specific consular requirements found beyond the standard documents; the embassy page is boilerplate.',
+          source: 'https://gh.usembassy.gov/visas/important-visa-information/'
+        },
+        TW: {
+          documents: H1B_DEFAULT_DOCS,
+          examples: {},
+          notes: 'AIT offers qualified applicants a Drop-Off Service for interview-waiver applications; most applications are by appointment only, with no H-1B-specific document list.',
+          source: 'https://www.ait.org.tw/visas/important-visa-information/'
+        },
         default: defaultEntry(H1B_DEFAULT_DOCS, 'https://www.uscis.gov/working-in-the-united-states/h-1b-specialty-occupations')
       })
     }
