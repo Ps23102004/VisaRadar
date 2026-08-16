@@ -82,7 +82,7 @@
             'Social media identifiers': 'Public social media handles or usernames used in the last 5 years',
             'DS-160 confirmation page': 'Printed DS-160 confirmation barcode matching the submitted application'
           },
-          notes: 'Disclose public social media handles from the last 5 years on the DS-160; its confirmation barcode must match the printed application exactly, and F-1 is not eligible for interview waiver.',
+          notes: 'Disclose public social media handles from the last 5 years on the DS-160; its confirmation barcode must match the printed application exactly, and F-1 is not eligible for the interview-waiver (dropbox) program available to some other visa categories.',
           source: 'https://mx.usembassy.gov/visas/'
         },
         NG: {
@@ -91,7 +91,7 @@
             'Visa application fee receipt': 'First Bank MRV-fee deposit slip, valid for 3 days',
             'I-901 SEVIS fee receipt': 'SEVIS fee receipt confirming the required I-901 payment'
           },
-          notes: 'Pay the MRV application fee with a First Bank deposit slip valid for 3 days or a USD-denominated card; the SEVIS fee remains required.',
+          notes: 'The $185 MRV application fee is paid via a First Bank deposit slip (valid only 3 days) or a USD-denominated card; the $350 SEVIS fee requirement is confirmed same as baseline.',
           source: 'https://ng.usembassy.gov/visas/important-visa-information/'
         },
         PH: {
@@ -178,7 +178,7 @@
             'Form I-20': 'I-20 explicitly presented as required for an F-1 application',
             'Valid passport': 'Passport for the required in-person interview, regardless of age'
           },
-          notes: 'F and J applicants are prioritized for appointments at both posts; all ages require an in-person interview, applicants should apply at least 6 months ahead, and the I-20 is explicitly required.',
+          notes: 'F and J applicants are prioritized for appointments at both posts; as of an Aug 11 2025 policy change, all ages (not just adults) require an in-person interview, applicants should apply at least 6 months ahead, and the I-20 is explicitly required.',
           source: 'https://pk.usembassy.gov/nonimmigrant-visas/'
         },
         BD: {
