@@ -19,7 +19,7 @@
     container.innerHTML =
       '<div class="glass" style="padding:22px; display:flex; flex-direction:column; gap:14px;">' +
         '<label style="font-size:13px; font-weight:600;">Company</label>' +
-        '<div class="search-wrap" aria-label="Search companies">' +
+        '<div class="search-wrap glass" aria-label="Search companies">' +
           '<span class="search-ico" aria-hidden="true">' +
             '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>' +
           '</span>' +
