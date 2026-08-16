@@ -243,6 +243,122 @@
     'J-1': {
       fee: '$220',
       countries: Object.assign(placeholderCountries(), {
+        IN: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; appointments are handled through ustraveldocs.com/in / usvisascheduling.',
+          source: 'https://in.usembassy.gov/visas/'
+        },
+        CN: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; scheduling routes to ustraveldocs.com/cn.',
+          source: 'https://china.usembassy-china.org.cn/visas/nonimmigrant-visas/'
+        },
+        MX: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with scheduling and fees handled through ais.usvisa-info.com/en-mx/niv.',
+          source: 'https://mx.usembassy.gov/visas/'
+        },
+        NG: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {
+            'I-901 SEVIS fee receipt': 'DS-2019 holder SEVIS fee receipt for the $220 J-1 fee (versus $350 for I-20/F-1); U.S. Government-sponsored G-1/G-2/G-3/G-7 program-code holders are exempt from both the SEVIS and MRV fees.'
+          },
+          notes: 'DS-2019 holders pay a $220 SEVIS fee (versus $350 for I-20/F-1); U.S. Government-sponsored programs with G-1/G-2/G-3/G-7 codes on the DS-2019 are exempt from both the SEVIS and MRV fees.',
+          source: 'https://ng.usembassy.gov/visas/important-visa-information/'
+        },
+        PH: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {
+            'Program sponsor information': 'Sponsor approval for the exchange visitor program, as framed by the dedicated Exchange Visitor Visa guidance.'
+          },
+          notes: 'The dedicated Exchange Visitor Visa section is framed around sponsor approval; otherwise the baseline documents apply with no country-specific additions.',
+          source: 'https://ph.usembassy.gov/visas/'
+        },
+        BR: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; logistics are handled through the Applicant Service Center at ais.usvisa-info.com/en-br.',
+          source: 'https://br.usembassy.gov/visas/important-visa-information/'
+        },
+        KR: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {
+            'I-901 SEVIS fee receipt': 'Government-funded exchange program with a G-1/G-2/G-3/G-7 program number on the DS-2019; exempt from the visa application (MRV) fee.'
+          },
+          notes: 'Baseline applies; government-funded exchange programs with G-1/G-2/G-3/G-7 program numbers on the DS-2019 are exempt from the visa application (MRV) fee.',
+          source: 'https://kr.usembassy.gov/visas/'
+        },
+        CA: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; scheduling is handled through ais.usvisa-info.com/en-ca/niv.',
+          source: 'https://ca.usembassy.gov/visas/important-visa-information/'
+        },
+        GB: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies; the embassy points to travel.state.gov\'s Study and Exchange page, with scheduling through ais.usvisa-info.com/en-gb.',
+          source: 'https://uk.usembassy.gov/visas/nonimmigrant-visas/'
+        },
+        DE: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; scheduling routes to ustraveldocs.com/de.',
+          source: 'https://de.usembassy.gov/visas/'
+        },
+        VN: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {
+            'I-901 SEVIS fee receipt': 'Government-sponsored J program with a G-1/G-2/G-3/G-7 code on the DS-2019; exempt from the I-901 SEVIS fee.'
+          },
+          notes: 'Baseline applies, except government-sponsored J programs with G-1/G-2/G-3/G-7 codes on the DS-2019 are exempt from the SEVIS fee, and the DS-160 confirmation barcode must exactly match the appointment confirmation.',
+          source: 'https://vn.usembassy.gov/nonimmigrant-visas/'
+        },
+        PK: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies; Embassy Islamabad and Consulate General Karachi both prioritize F and J visa appointments, and the DS-2019 is cited as an example supporting document.',
+          source: 'https://pk.usembassy.gov/nonimmigrant-visas/'
+        },
+        BD: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; logistics are handled through ustraveldocs.com/bd.',
+          source: 'https://bd.usembassy.gov/visas/'
+        },
+        CO: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; scheduling is handled through ais.usvisa-info.com/en-co/niv.',
+          source: 'https://co.usembassy.gov/visas/important-visa-information/'
+        },
+        UA: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; the page provides a Visa Wizard and a travel.state.gov link.',
+          source: 'https://ua.usembassy.gov/visas/'
+        },
+        NP: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; step-by-step logistics are available through ustraveldocs.com/np/en/.',
+          source: 'https://np.usembassy.gov/visas/'
+        },
+        GH: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions; fee payment and scheduling are handled through usvisaappt.com.',
+          source: 'https://gh.usembassy.gov/visas/nonimmigrant-visas/'
+        },
+        TW: {
+          documents: J1_DEFAULT_DOCS,
+          examples: {},
+          notes: 'Baseline applies, with no J-1-specific additions.',
+          source: 'https://www.ait.org.tw/visas/important-visa-information/'
+        },
         default: defaultEntry(J1_DEFAULT_DOCS, 'https://j1visa.state.gov/sponsors/current/')
       })
     },
