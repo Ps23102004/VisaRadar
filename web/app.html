@@ -44,16 +44,19 @@
 
       var SECTIONS = ['browse', 'check', 'checklist', 'journey'];
       var registry = {};
+      var currentSection = null;
 
       window.AppShell = {
         registerSection: function(id, handlers){ registry[id] = handlers; },
         showSection: function(id){
           if (SECTIONS.indexOf(id) === -1) id = 'browse';
+          currentSection = id;
           SECTIONS.forEach(function(s){
             document.getElementById('section-' + s).classList.toggle('active', s === id);
             document.querySelector('.tab-btn[data-section="' + s + '"]').classList.toggle('active', s === id);
           });
           location.hash = id;
+          VisaRadarNav.mountNav('app.html#' + id);
           if (registry[id] && !registry[id]._mounted){
             registry[id]._mounted = true;
             registry[id].mount(document.getElementById('section-' + id), window.appState);
@@ -63,6 +66,11 @@
 
       document.querySelectorAll('.tab-btn').forEach(function(btn){
         btn.addEventListener('click', function(){ AppShell.showSection(btn.dataset.section); });
+      });
+
+      window.addEventListener('hashchange', function(){
+        var target = location.hash.replace('#', '') || 'browse';
+        if (target !== currentSection) AppShell.showSection(target);
       });
 
       var employersPromise = fetch('employers.json').then(function(r){ return r.json(); });
