@@ -9,3 +9,5 @@ dist/
 web/employers.json
 
 .worktrees/
+
+.superpowers/
