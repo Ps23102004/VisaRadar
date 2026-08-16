@@ -379,9 +379,7 @@
         },
         MX: {
           documents: H1B_DEFAULT_DOCS,
-          examples: {
-            'Visa application fee receipt': 'Same-visa-class renewal where the prior visa expired within 12 months and may qualify for an interview waiver.'
-          },
+          examples: {},
           notes: 'Same-visa-class renewals may qualify for an interview waiver when the prior visa expired within 12 months; apply in your country of nationality or usual residence, and allow roughly 8–10 weeks for Applicant Service Center processing.',
           source: 'https://mx.usembassy.gov/visas/'
         },
@@ -394,7 +392,7 @@
         PH: {
           documents: H1B_DEFAULT_DOCS,
           examples: {},
-          notes: 'The offsite Visa Application Center at Parqal, Parañaque handles pre-interview fingerprinting, free passport pickup, 221(g) document drop-off, and interview-waiver submissions; no document requirement changes the H-1B baseline.',
+          notes: 'The offsite Visa Application Center at Parqal, Parañaque handles pre-interview fingerprinting, passport pickup, 221(g) document drop-off, and interview-waiver submissions; no document requirement changes the H-1B baseline.',
           source: 'https://ph.usembassy.gov/important-visa-information/'
         },
         BR: {
@@ -412,7 +410,7 @@
         CA: {
           documents: H1B_DEFAULT_DOCS,
           examples: {},
-          notes: 'Set social media accounts to public for H-1B vetting; otherwise no H-1B-specific consular requirements were found beyond the standard documents.',
+          notes: 'H-1B is named as an example visa category on this page; social media accounts must be set to public for H-1B/H-4 applicants; nothing else beyond baseline.',
           source: 'https://ca.usembassy.gov/visas/'
         },
         GB: {
