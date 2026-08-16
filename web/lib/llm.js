@@ -29,7 +29,8 @@
       headers["anthropic-version"] = "2023-06-01";
       body = { model: model, max_tokens: 1024, system: "Extract job-posting details accurately and return only the requested JSON.", messages: [{ role: "user", content: prompt }] };
     } else if (cfg.native === "gemini"){
-      url = cfg.baseUrl + "/v1beta/models/" + encodeURIComponent(model) + ":generateContent?key=" + encodeURIComponent(apiKey);
+      url = cfg.baseUrl + "/v1beta/models/" + encodeURIComponent(model) + ":generateContent";
+      headers["x-goog-api-key"] = apiKey;
       body = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0 } };
     } else {
       headers["Authorization"] = "Bearer " + apiKey;
