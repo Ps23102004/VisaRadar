@@ -34,7 +34,17 @@
       var raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       var parsed = JSON.parse(raw);
-      return (parsed && typeof parsed === "object") ? parsed : null;
+      if (!parsed || typeof parsed !== "object") return null;
+      var steps = parsed.steps || {};
+      Object.keys(steps).forEach(function(id){
+        var step = steps[id];
+        if (!step || typeof step !== "object") return;
+        if (!step.status){
+          step.status = step.done === true ? "completed" : "not-started";
+          delete step.done;
+        }
+      });
+      return parsed;
     } catch(e){ return null; }
   }
 
@@ -42,11 +52,18 @@
     try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch(e){}
   }
 
-  function checkIcon(){
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
-  }
-
   var VISA_KEY_MAP = { 'F-1': 'f1', 'J-1': 'j1', 'H-1B': 'h1b' };
+  var STATUS_ORDER = ["not-started", "in-progress", "completed"];
+  var STATUS_LABELS = {
+    "not-started": "Not started",
+    "in-progress": "In progress",
+    "completed": "Completed"
+  };
+  var STATUS_COLORS = {
+    "not-started": "var(--none)",
+    "in-progress": "var(--moderate)",
+    "completed": "var(--strong)"
+  };
 
   function mount(container, appState){
     container.innerHTML =
@@ -85,43 +102,55 @@
       var doneCount = 0;
 
       defs.forEach(function(def){
-        var stepState = localState.steps[def.id] || { done: false, note: "" };
-        if (stepState.done) doneCount++;
+        var stepState = localState.steps[def.id] || { status: "not-started", note: "" };
+        if (STATUS_ORDER.indexOf(stepState.status) === -1) stepState.status = "not-started";
+        if (stepState.status === "completed") doneCount++;
 
         var li = document.createElement("li");
         li.style.cssText = "padding:16px 18px; display:flex; flex-direction:column; gap:10px;";
 
-        var row = document.createElement("div");
-        row.style.cssText = "display:flex; align-items:center; gap:14px;";
+        var stepArea = document.createElement("div");
+        stepArea.setAttribute("role", "button");
+        stepArea.setAttribute("tabindex", "0");
+        stepArea.setAttribute("aria-label", "Change status for " + def.title + ". Current status: " + STATUS_LABELS[stepState.status]);
+        stepArea.style.cssText = "cursor:pointer; border-radius:10px; padding:5px; margin:-5px;";
 
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.setAttribute("aria-label", (stepState.done ? "Mark incomplete: " : "Mark complete: ") + def.title);
-        btn.style.cssText = "flex:none; width:26px; height:26px; border-radius:50%; border:2px solid " +
-          (stepState.done ? "var(--strong)" : "rgba(0,0,0,0.15)") + "; background:" + (stepState.done ? "var(--strong)" : "transparent") +
-          "; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;";
-        btn.innerHTML = stepState.done ? checkIcon() : '';
-        btn.addEventListener("click", function(){
-          stepState.done = !stepState.done;
+        function advanceStatus(){
+          stepState.status = STATUS_ORDER[(STATUS_ORDER.indexOf(stepState.status) + 1) % STATUS_ORDER.length];
           localState.steps[def.id] = stepState;
           saveState(localState);
           render();
+        }
+        stepArea.addEventListener("click", advanceStatus);
+        stepArea.addEventListener("keydown", function(event){
+          if (event.key === "Enter" || event.key === " "){
+            event.preventDefault();
+            advanceStatus();
+          }
         });
 
+        var row = document.createElement("div");
+        row.style.cssText = "display:flex; align-items:center; gap:14px;";
+
+        var indicator = document.createElement("span");
+        indicator.style.cssText = "flex:none; min-width:92px; border-radius:999px; background:" + STATUS_COLORS[stepState.status] + "; color:white; font-size:12px; font-weight:700; line-height:26px; text-align:center; padding:0 9px;";
+        indicator.textContent = STATUS_LABELS[stepState.status];
+
         var title = document.createElement("span");
-        title.style.cssText = "font-size:15px; font-weight:600; flex:1;" + (stepState.done ? "color:var(--ink-soft); text-decoration:line-through;" : "");
+        title.style.cssText = "font-size:15px; font-weight:600; flex:1;" + (stepState.status === "completed" ? "color:var(--ink-soft); text-decoration:line-through;" : "");
         title.textContent = def.title;
 
-        row.appendChild(btn);
+        row.appendChild(indicator);
         row.appendChild(title);
-        li.appendChild(row);
+        stepArea.appendChild(row);
 
         if (def.desc){
           var desc = document.createElement("p");
           desc.style.cssText = "font-size:13px; color:var(--ink-soft); margin:0; padding-left:40px;";
           desc.textContent = def.desc;
-          li.appendChild(desc);
+          stepArea.appendChild(desc);
         }
+        li.appendChild(stepArea);
 
         var note = document.createElement("input");
         note.type = "text";
@@ -145,7 +174,7 @@
       labelEl.textContent = doneCount + " of " + total + " steps done";
       barEl.style.width = pct + "%";
 
-      var decisionDone = localState.steps.decision && localState.steps.decision.done;
+      var decisionDone = localState.steps.decision && localState.steps.decision.status === "completed";
       celebrateEl.style.display = decisionDone ? 'block' : 'none';
     }
 
