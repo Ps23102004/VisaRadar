@@ -99,6 +99,10 @@
 
     function syncFromSharedState(company, allowSelection){
       company = company || '';
+      if (!selectedEmployer || company !== selectedEmployer.n){
+        selectedEmployer = null;
+        selectedEl.style.display = 'none';
+      }
       companySearchEl.value = company;
       lastSetValue = company;
       renderCompanyResults();
