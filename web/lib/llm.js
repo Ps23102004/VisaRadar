@@ -28,14 +28,21 @@
     } else if (cfg.native === "anthropic"){
       headers["x-api-key"] = apiKey;
       headers["anthropic-version"] = "2023-06-01";
-      body = { model: model, max_tokens: 1024, system: opts.system || "Follow the user's instructions exactly and respond only in the exact format requested.", messages: [{ role: "user", content: prompt }] };
+      headers["anthropic-dangerous-direct-browser-access"] = "true";
+      // Default bumped from 1024: on thinking-capable models (e.g. GLM via z.ai) the
+      // model's internal "thinking" tokens share this same budget with the real answer,
+      // and truncated mid-JSON output on longer responses (e.g. ranking 5-8 results with
+      // reasons) was confirmed live against a real endpoint. Callers needing more room
+      // (or less, for tight budgets) can pass opts.maxTokens.
+      body = { model: model, max_tokens: opts.maxTokens || 4096, temperature: 0, system: opts.system || "Follow the user's instructions exactly and respond only in the exact format requested.", messages: [{ role: "user", content: prompt }] };
     } else if (cfg.native === "gemini"){
       url = cfg.baseUrl + "/v1beta/models/" + encodeURIComponent(model) + ":generateContent";
       headers["x-goog-api-key"] = apiKey;
-      body = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0 } };
+      body = { contents: [{ role: "user", parts: [{ text: prompt }] }], generationConfig: { temperature: 0, maxOutputTokens: opts.maxTokens || 4096 } };
     } else {
       headers["Authorization"] = "Bearer " + apiKey;
-      body = { model: model, messages: [{ role: "user", content: prompt }], temperature: 0 };
+      body = { model: model, messages: [{ role: "user", content: prompt }] };
+      if (provider !== "openai") body.temperature = 0;
     }
 
     var controller = typeof AbortController !== 'undefined' && opts.timeoutMs ? new AbortController() : null;
@@ -46,7 +53,11 @@
       var request = { method: "POST", headers: headers, body: JSON.stringify(body) };
       if (controller) request.signal = controller.signal;
       res = await fetch(url, request);
-      if (!res.ok) throw new Error("provider returned " + res.status);
+      if (!res.ok){
+        var errorBody = '';
+        try { errorBody = (await res.text()).trim().slice(0, 300); } catch (readError) {}
+        throw new Error("provider returned " + res.status + (errorBody ? ": " + errorBody : ""));
+      }
       data = await res.json();
     } catch (error){
       if (error && error.name === 'AbortError') throw new Error("request timed out");
