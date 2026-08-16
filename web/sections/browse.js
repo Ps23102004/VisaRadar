@@ -142,8 +142,9 @@
     var cfg = VisaRadarLLM.PROVIDERS[provider];
     var apiKey = provider ? (localStorage.getItem('visaradar_key_' + provider) || '').trim() : '';
     var model = provider ? (localStorage.getItem('visaradar_model_' + provider) || '').trim() : '';
-    if (!cfg || (cfg.needsKey && !apiKey) || !model) return null;
-    return { provider: provider, apiKey: apiKey, model: model };
+    var baseUrl = provider === 'custom' ? (localStorage.getItem('visaradar_baseurl_custom') || '').trim() : '';
+    if (!cfg || (cfg.needsKey && !apiKey) || !model || (provider === 'custom' && !baseUrl)) return null;
+    return { provider: provider, apiKey: apiKey, model: model, baseUrl: baseUrl };
   }
 
   var onFilterChange = function(){};
@@ -241,7 +242,7 @@
       try {
         var rawConstraints = await VisaRadarLLM.callLLM(
           configured.provider, configured.model, configured.apiKey, constraintPrompt(query, false),
-          { timeoutMs: REQUEST_TIMEOUT_MS, system: "Extract structured search filters from the user's query and return only the requested JSON." }
+          { timeoutMs: REQUEST_TIMEOUT_MS, system: "Extract structured search filters from the user's query and return only the requested JSON.", baseUrl: configured.baseUrl }
         );
         var constraints;
         try {
@@ -249,7 +250,7 @@
         } catch (firstParseError){
           var retryRaw = await VisaRadarLLM.callLLM(
             configured.provider, configured.model, configured.apiKey, constraintPrompt(query, true),
-            { timeoutMs: REQUEST_TIMEOUT_MS, system: "Extract structured search filters from the user's query and return only the requested JSON." }
+            { timeoutMs: REQUEST_TIMEOUT_MS, system: "Extract structured search filters from the user's query and return only the requested JSON.", baseUrl: configured.baseUrl }
           );
           try {
             constraints = parseConstraints(retryRaw);
@@ -263,7 +264,7 @@
         setAIStatus('Ranking grounded matches…', false);
         var rawRanking = await VisaRadarLLM.callLLM(
           configured.provider, configured.model, configured.apiKey, rankingPrompt(query, filtered.candidates),
-          { timeoutMs: REQUEST_TIMEOUT_MS, system: "Rank the given real companies against the user's query and return only the requested JSON, using only companies from the provided list." }
+          { timeoutMs: REQUEST_TIMEOUT_MS, system: "Rank the given real companies against the user's query and return only the requested JSON, using only companies from the provided list.", baseUrl: configured.baseUrl }
         );
         var ranked = [];
         try {
@@ -271,7 +272,7 @@
         } catch (rankingParseError){
           var retryRanking = await VisaRadarLLM.callLLM(
             configured.provider, configured.model, configured.apiKey, rankingPrompt(query, filtered.candidates, true),
-            { timeoutMs: REQUEST_TIMEOUT_MS, system: "Rank the given real companies against the user's query and return only the requested JSON, using only companies from the provided list." }
+            { timeoutMs: REQUEST_TIMEOUT_MS, system: "Rank the given real companies against the user's query and return only the requested JSON, using only companies from the provided list.", baseUrl: configured.baseUrl }
           );
           try { ranked = validateRanking(retryRanking, filtered.candidates); } catch (retryRankingParseError){ ranked = []; }
         }

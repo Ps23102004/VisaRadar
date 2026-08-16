@@ -15,7 +15,8 @@
     zai:        { baseUrl: "https://api.z.ai/api/anthropic", chatPath: "/v1/messages", needsKey: true, native: "anthropic" },
     gemini:     { baseUrl: "https://generativelanguage.googleapis.com", needsKey: true, native: "gemini" },
     groq:       { baseUrl: "https://api.groq.com/openai/v1", chatPath: "/chat/completions", needsKey: true, native: "openai" },
-    together:   { baseUrl: "https://api.together.xyz/v1", chatPath: "/chat/completions", needsKey: true, native: "openai" }
+    together:   { baseUrl: "https://api.together.xyz/v1", chatPath: "/chat/completions", needsKey: true, native: "openai" },
+    custom:     { baseUrl: null, chatPath: "/chat/completions", needsKey: true, native: "openai" }
   };
 
   // HTTP header values must be Latin-1 (ISO-8859-1); a pasted API key carrying a stray
@@ -32,7 +33,9 @@
     opts = opts || {};
     apiKey = sanitizeApiKey(apiKey);
     var cfg = PROVIDERS[provider];
-    var url = cfg.baseUrl + cfg.chatPath;
+    var baseUrl = cfg.baseUrl || String(opts.baseUrl || "").trim();
+    if (!baseUrl) throw new Error("custom provider requires a base URL");
+    var url = baseUrl.replace(/\/+$/, "") + (cfg.chatPath || "");
     var headers = { "Content-Type": "application/json" };
     var body;
     if (cfg.native === "ollama"){
