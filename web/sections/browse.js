@@ -16,9 +16,17 @@
   }
 
   function stripCodeFence(raw){
-    var trimmed = String(raw).trim();
+    var trimmed = String(raw).replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
     var match = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
-    return match ? match[1].trim() : trimmed;
+    if (match) return match[1].trim();
+    var objectStart = trimmed.indexOf('{');
+    var arrayStart = trimmed.indexOf('[');
+    var start = objectStart === -1 ? arrayStart : (arrayStart === -1 ? objectStart : Math.min(objectStart, arrayStart));
+    if (start !== -1){
+      var end = trimmed.lastIndexOf(trimmed.charAt(start) === '{' ? '}' : ']');
+      if (end > start) return trimmed.slice(start, end + 1);
+    }
+    return trimmed;
   }
 
   function constraintPrompt(query, strict){
@@ -34,13 +42,15 @@
       "User query:\n" + query;
   }
 
-  function rankingPrompt(query, candidates){
-    return "Rank the best employer matches for the user's query using ONLY the candidate list below. Pick 5-8 matches and give one concise sentence explaining each choice. Return ONLY a raw JSON array with this exact shape, with no markdown code fences or other text:\n" +
+  function rankingPrompt(query, candidates, strict){
+    return (strict ? "Return ONLY the JSON array, no other text, no markdown code fences, no thinking, no explanation.\n\n" : "") +
+      "Rank the best employer matches for the user's query using ONLY the candidate list below. Pick up to 8 matches and give one concise sentence explaining each choice. Return ONLY a raw JSON array with this exact shape, with no markdown code fences or other text:\n" +
       "[{\"k\":\"<exact key from the candidate list>\",\"reason\":\"<one-sentence reason>\"}]\n\n" +
       "Only pick companies from the list given — do not invent or reference any company not in this list. Copy each k exactly. Do not put company names or keys inside the reason unless they appear in the candidate list. In each reason, describe only the company being recommended — do not name, mention, or compare to any other company.\n\n" +
       "User query:\n" + query + "\n\n" +
+      "Each candidate has: k (unique key, copy exactly), n (company name), s (states), w (typical annual wage in dollars), t (top job titles on file), l (DOL certification strength: strong/moderate/weak/none).\n\n" +
       "Candidate list:\n" + JSON.stringify(candidates.map(function(e){
-        return { k: e.k, n: e.n, s: e.s, w: e.w, l: e.l };
+        return { k: e.k, n: e.n, s: e.s, w: e.w, t: e.t, l: e.l };
       }));
   }
 
@@ -85,12 +95,14 @@
   // rather than a per-employee "typical wage" -- a data quality issue in the underlying
   // dataset, not something fixable here, but it was dominating "top by wage" results with
   // implausible outliers. $2,000,000/year is a generous ceiling for a real individual
-  // salary (well above even top tech/exec pay) and excludes only ~0.17% of records.
+  // salary (well above even top tech/exec pay), so outliers are demoted below plausible wages.
   var PLAUSIBLE_MAX_WAGE = 2000000;
 
   function topByWage(employers){
-    return employers.filter(function(e){ return Number(e.w || 0) <= PLAUSIBLE_MAX_WAGE; })
-      .sort(function(a, b){ return Number(b.w || 0) - Number(a.w || 0); }).slice(0, 20);
+    function byWage(a, b){ return Number(b.w || 0) - Number(a.w || 0); }
+    var plausible = employers.filter(function(e){ return Number(e.w || 0) <= PLAUSIBLE_MAX_WAGE; }).sort(byWage);
+    var outliers = employers.filter(function(e){ return Number(e.w || 0) > PLAUSIBLE_MAX_WAGE; }).sort(byWage);
+    return plausible.concat(outliers).slice(0, 20);
   }
 
   function filterCandidates(employers, constraints){
@@ -149,6 +161,7 @@
         '<input id="browse-search" class="search-input" type="search" autocomplete="off" spellcheck="false" ' +
           'placeholder="Search company name or state (e.g. CA, Google, Microsoft)..." aria-label="Search company name or state">' +
       '</section>' +
+      '<p style="font-size:12px; line-height:1.45; color:var(--ink-soft); margin:8px 2px 14px;">Wage figures come from DOL filing data and can occasionally be imprecise for a small number of employers.</p>' +
       '<ul id="browse-results" class="stagger" style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;"></ul>';
 
     var searchEl = container.querySelector('#browse-search');
@@ -243,7 +256,15 @@
           { timeoutMs: REQUEST_TIMEOUT_MS, system: "Rank the given real companies against the user's query and return only the requested JSON, using only companies from the provided list." }
         );
         var ranked = [];
-        try { ranked = validateRanking(rawRanking, filtered.candidates); } catch (rankingParseError){ ranked = []; }
+        try {
+          ranked = validateRanking(rawRanking, filtered.candidates);
+        } catch (rankingParseError){
+          var retryRanking = await VisaRadarLLM.callLLM(
+            configured.provider, configured.model, configured.apiKey, rankingPrompt(query, filtered.candidates, true),
+            { timeoutMs: REQUEST_TIMEOUT_MS, system: "Rank the given real companies against the user's query and return only the requested JSON, using only companies from the provided list." }
+          );
+          try { ranked = validateRanking(retryRanking, filtered.candidates); } catch (retryRankingParseError){ ranked = []; }
+        }
         var rankingUnavailable = ranked.length === 0;
         if (rankingUnavailable){
           ranked = filtered.candidates.map(function(employer){ return { employer: employer, reason: '' }; });
@@ -268,7 +289,7 @@
       if (!notes.exact) noteParts.push('No exact matches for your filters — showing top companies overall instead.');
       if (notes.rankingUnavailable) noteParts.push('AI ranking unavailable, showing top matches by wage instead.');
       if (notes.weatherApproximation) noteParts.push('Location filtering is a rough approximation, not real weather data.');
-      setAIStatus(noteParts.length ? noteParts.join(' ') : 'Matches are grounded in VisaRadar employer data.', false);
+      setAIStatus(noteParts.length ? noteParts.join(' ') : 'Companies shown are real VisaRadar records. The one-line reasons are AI-written and not independently verified.', false);
 
       var listEl = aiContentEl.querySelector('#ask-ai-results');
       listEl.innerHTML = ranked.map(function(result){
@@ -314,6 +335,7 @@
     function renderSearchLinks(){
       var companies = Object.keys(selected).map(function(key){ return selected[key]; });
       aiContentEl.innerHTML =
+        '<button id="ask-ai-back" type="button" style="appearance:none; border:0; background:none; color:var(--accent); cursor:pointer; font:inherit; font-size:13px; padding:0; margin:0 0 12px;">← Back to search</button>' +
         '<h2 style="font-size:18px; margin:0 0 6px;">Search your shortlist</h2>' +
         '<p style="font-size:13px; color:var(--ink-soft); margin:0 0 14px;">Search links, not guaranteed live postings — this app doesn\'t have real-time job listing data.</p>' +
         '<ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;">' +
@@ -332,6 +354,7 @@
             '</li>';
           }).join('') +
         '</ul>';
+      aiContentEl.querySelector('#ask-ai-back').addEventListener('click', renderAskAI);
     }
 
     function renderResults(){
