@@ -29,6 +29,7 @@
         '<p id="check-company-selected" style="font-size:13px; color:var(--ink-soft); margin:0; display:none;"></p>' +
         '<label style="font-size:13px; font-weight:600;">Title<select id="check-title"></select></label>' +
         '<label style="font-size:13px; font-weight:600;">State<select id="check-state"></select></label>' +
+        '<p style="font-size:11px; color:var(--ink-soft); margin:0;">Title and state are the top options on file for this company (DOL data caps at 3 each) — the stats shown reflect the whole company, not just this selection.</p>' +
         '<div class="actions" style="display:flex; justify-content:flex-end;"><button id="check-go" class="go press" type="button">Visualize →</button></div>' +
         '<details><summary style="font-size:12px; color:var(--ink-soft); cursor:pointer;">Paste custom JSON instead</summary>' +
           '<textarea id="check-json" spellcheck="false" style="width:100%; min-height:100px; margin-top:8px; font-family:ui-monospace,monospace; font-size:13px;"></textarea>' +
@@ -39,7 +40,7 @@
       '<div class="result glass" id="check-result" style="padding:24px; display:none; flex-direction:column; gap:18px;">' +
         '<div class="result-top" style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">' +
           '<div><p class="company" id="company" style="font-size:22px; font-weight:600; margin:0;"></p><p class="title" id="title" style="font-size:16px; color:var(--ink-soft); margin:4px 0 0;"></p></div>' +
-          '<div class="confidence" style="text-align:right;"><b id="conf-pct" style="display:block; font-size:26px; font-weight:600; color:var(--accent);"></b></div>' +
+          '<div class="confidence" style="text-align:right;"><b id="conf-pct" style="display:block; font-size:26px; font-weight:600; color:var(--accent);"></b><span style="display:block; font-size:11px; color:var(--ink-soft); margin-top:2px;">of this company\'s filings certified</span></div>' +
         '</div>' +
         '<div class="meta" style="display:flex; align-items:center; gap:10px;"><span class="loc" id="loc" style="font-size:15px;"></span><span class="badge" id="label"></span></div>' +
         '<ul class="evidence" id="evidence" style="display:flex; flex-direction:column; gap:8px; margin:0; padding:0; list-style:none;"></ul>' +
