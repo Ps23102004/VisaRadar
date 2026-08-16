@@ -1,0 +1,198 @@
+:root{
+  --mx: 50%;
+  --my: 50%;
+  --accent: #FF9500;
+  --strong: #30D158;
+  --moderate: #FFD60A;
+  --weak: #FF9F0A;
+  --none: #8E8E93;
+  --strong-tint: rgba(48,209,88,0.14);
+  --moderate-tint: rgba(255,214,10,0.16);
+  --weak-tint: rgba(255,159,10,0.14);
+  --none-tint: rgba(142,142,147,0.16);
+  --ink: #0A0A0C;
+  --ink-soft: rgba(10,10,12,0.6);
+  --bg: #FBFBFD;
+  --glass-strong: rgba(255,255,255,0.7);
+  --accent-soft: rgba(255,149,0,0.25);
+}
+
+*{ box-sizing: border-box; }
+html, body{ margin: 0; padding: 0; }
+
+body{
+  min-height: 100vh;
+  background: var(--bg);
+  background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.08), transparent 60%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Nav (canonical structure, matches nav.js output) ---------- */
+header.nav{
+  display: flex;
+  align-items: center;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px 22px 0;
+}
+header.nav .logo{
+  font-weight: 700;
+  font-size: 16px;
+  margin-right: auto;
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+header.nav .logo .dot{
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+}
+nav.nav-links{ display: flex; gap: 24px; align-items: center; font-size: 14px; flex-wrap: wrap; }
+nav.nav-links a{ color: var(--ink-soft); text-decoration: none; }
+nav.nav-links a:hover{ color: var(--ink); }
+nav.nav-links a.current,
+nav.nav-links a[aria-current="page"]{
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 2px;
+}
+
+/* ---------- Glass card base ---------- */
+.glass{
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.55);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  box-shadow: 0 12px 34px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.55);
+}
+.glass::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle 220px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.25), transparent 70%);
+}
+.glass > *{ position: relative; z-index: 1; }
+
+/* ---------- Search input (reusable — Check's company search reuses this) ---------- */
+.search-wrap{ position: relative; }
+.search-wrap .glass{
+  padding: 16px 18px 16px 50px;
+  display: flex;
+  align-items: center;
+  transition: box-shadow .3s cubic-bezier(0.16,1,0.3,1), border-color .3s cubic-bezier(0.16,1,0.3,1), background .3s cubic-bezier(0.16,1,0.3,1);
+}
+.search-wrap:focus-within .glass{
+  border-color: var(--accent);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 0 0 3px var(--accent-soft);
+  background: var(--glass-strong);
+}
+.search-ico{
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-soft);
+  pointer-events: none;
+  display: flex;
+}
+.search-input{
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 17px;
+  color: var(--ink);
+}
+.search-input::placeholder{ color: var(--ink-soft); opacity: .8; }
+
+/* ---------- Native control chrome reset (closes the "blue" gap) ---------- */
+select, input[type="text"], input[type="search"]{
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 8px 12px;
+  outline: none;
+}
+select{
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%230A0A0C' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 30px;
+}
+select:focus-visible, input:focus-visible, button:focus-visible{
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Button ---------- */
+button.go{
+  appearance: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  padding: 11px 22px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.16);
+  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+button.go:hover{ transform: scale(1.03); box-shadow: 0 6px 20px rgba(0,0,0,0.22); }
+button.go:active{ transform: scale(0.98); }
+
+/* ---------- Motion utilities (applied uniformly — was on 4/8 pages, now all) ---------- */
+.fade-in{ animation: fadeIn 0.4s ease forwards; }
+.stagger > *{ animation: fadeIn 0.4s ease forwards; opacity: 0; }
+.stagger > *:nth-child(1){ animation-delay: 0ms; }
+.stagger > *:nth-child(2){ animation-delay: 60ms; }
+.stagger > *:nth-child(3){ animation-delay: 120ms; }
+.stagger > *:nth-child(4){ animation-delay: 180ms; }
+.stagger > *:nth-child(5){ animation-delay: 240ms; }
+.press:active{ transform: scale(0.98); }
+
+@keyframes fadeIn{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }
+@keyframes cardIn{ from{ opacity: 0; transform: scale(0.96); } to{ opacity: 1; transform: scale(1); } }
+@keyframes rowIn{ from{ opacity: 0; transform: translateY(8px); } to{ opacity: 1; transform: translateY(0); } }
+
+@media (prefers-reduced-motion: reduce){
+  .fade-in, .stagger > *, .press:active{ animation: none !important; opacity: 1 !important; transform: none !important; }
+  button.go{ transition: none !important; }
+}
+
+@media (max-width: 480px){
+  select, input[type="text"], input[type="search"]{ font-size: 16px; }
+}
+
+/* ---------- Dark mode ---------- */
+@media (prefers-color-scheme: dark){
+  :root{ --ink: #F5F5F7; --ink-soft: rgba(245,245,247,0.6); --bg: #000000; --glass-strong: rgba(28,28,30,0.75); }
+  body{ background-image: radial-gradient(1100px 720px at 50% -12%, rgba(255,149,0,0.14), transparent 62%); }
+  .glass{
+    background: rgba(28,28,30,0.55);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  .glass::before{ background: radial-gradient(circle 220px at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.12), transparent 70%); }
+  select, input[type="text"], input[type="search"]{ background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+  select{
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23F5F5F7' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+}
