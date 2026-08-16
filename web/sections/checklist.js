@@ -33,6 +33,7 @@
     var visaTabs = container.querySelectorAll('#checklist-visa-tabs .tab-btn');
     var countryEl = container.querySelector('#checklist-country');
     var bodyEl = container.querySelector('#checklist-body');
+    var expandedExampleIndex = null;
 
     function currentVisa(){
       var active = container.querySelector('#checklist-visa-tabs .tab-btn.active');
@@ -49,29 +50,48 @@
         '<p style="font-size:14px; color:var(--accent); font-weight:600;">Fee: ' + esc(feeText) + '</p>' +
         (entry.notes ? '<p style="font-size:13px; color:var(--ink-soft); margin-bottom:14px;">' + esc(entry.notes) + '</p>' : '') +
         '<div class="glass stagger" style="padding:6px;"><ul style="list-style:none; margin:0; padding:0;">' +
-        entry.documents.map(function(doc){
+        entry.documents.map(function(doc, index){
           var example = entry.examples && entry.examples[doc.title];
-          return '<li style="padding:12px 14px; font-size:14px;">' +
+          var expanded = expandedExampleIndex === index;
+          return '<li' + (example ? ' data-example-index="' + index + '" role="button" tabindex="0" aria-expanded="' + expanded + '" style="padding:12px 14px; font-size:14px; cursor:pointer;"' : ' style="padding:12px 14px; font-size:14px;"') + '>' +
             '<strong style="display:block;">' + esc(doc.title) + '</strong>' +
             '<span style="color:var(--ink-soft); font-size:13px;">' + esc(doc.detail) + '</span>' +
-            (example ? '<div style="margin-top:6px; font-size:12.5px; color:var(--ink-soft); font-style:italic;">Example: ' + esc(example) + '</div>' : '') +
+            (example ? '<span aria-hidden="true" style="float:right; color:var(--ink-soft); font-size:13px;">' + (expanded ? '−' : '+') + '</span>' : '') +
+            (example && expanded ? '<div style="margin-top:6px; font-size:12.5px; color:var(--ink-soft); font-style:italic;">Example: ' + esc(example) + '</div>' : '') +
           '</li>';
         }).join('') +
         '</ul></div>' +
         '<p style="font-size:12px; color:var(--ink-soft); margin-top:20px;">Source: <a href="' + esc(entry.source) + '" style="color:var(--ink-soft);">' + esc(entry.source) + '</a> — informational only, not legal advice, always confirm against the live page.</p>';
+
+      bodyEl.querySelectorAll('[data-example-index]').forEach(function(row){
+        function toggleExample(){
+          var index = Number(row.dataset.exampleIndex);
+          expandedExampleIndex = expandedExampleIndex === index ? null : index;
+          renderBody();
+        }
+        row.addEventListener('click', toggleExample);
+        row.addEventListener('keydown', function(event){
+          if (event.key === 'Enter' || event.key === ' '){
+            event.preventDefault();
+            toggleExample();
+          }
+        });
+      });
     }
 
-    visaTabs.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        visaTabs.forEach(function(b){ b.classList.remove('active'); });
-        btn.classList.add('active');
-        state.set({ visaType: btn.dataset.visa });
-        renderBody();
+      visaTabs.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          visaTabs.forEach(function(b){ b.classList.remove('active'); });
+          btn.classList.add('active');
+          state.set({ visaType: btn.dataset.visa });
+          expandedExampleIndex = null;
+          renderBody();
       });
     });
 
     countryEl.addEventListener('change', function(){
       state.set({ country: countryEl.value });
+      expandedExampleIndex = null;
       renderBody();
     });
 
