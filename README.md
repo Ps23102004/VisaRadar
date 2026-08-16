@@ -4,6 +4,8 @@ Paste a job posting, get a real answer on whether that employer actually sponsor
 
 Every other "visa sponsor" resource is a database you browse. VisaRadar is a tool you point at *any* posting.
 
+![Browsing and filtering the sponsorship index, then expanding a result for wage detail](assets/visaradar-browse-demo.gif)
+
 ```
 $ radar check "Senior SWE at Google LLC. We sponsor H-1B for qualified candidates." --json
 {
