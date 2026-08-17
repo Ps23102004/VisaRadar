@@ -64,7 +64,13 @@ Every check is logged to `~/.visaradar/history.jsonl`, and — unless you pass `
 
 ### Web
 
-A self-contained, zero-dependency site in `web/` — no server needed, just open the HTML files:
+A self-contained, zero-dependency site in `web/` — no build tooling, just open the HTML files. One exception: `app.html` reads `web/employers.json`, which is generated (not committed — it's derived data, kept out of git so it can't go stale silently) and served over `http://`, not `file://` (the browser blocks a same-origin `fetch()` under the `file://` origin):
+
+```bash
+python scripts/export_browser_data.py   # writes web/employers.json
+python -m http.server --directory web 8000
+# open http://localhost:8000/app.html
+```
 
 - **`app.html`** — the unified Browser experience. Its Browse, Check, Checklist, and My Journey tabs share company, state, country, and visa-type state: search the bundled 67,722-employer dataset, select a company to visualize its filing history, consult the official-document checklist, and track progress locally in the browser.
 - **`byok.html`** — no CLI install needed: pick a provider (or local Ollama, no key), paste your API key, paste a posting, and it calls the LLM directly from the browser. Your key never leaves local storage except to the provider you chose.

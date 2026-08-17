@@ -81,7 +81,17 @@
         if (target !== currentSection) AppShell.showSection(target);
       });
 
-      var employersPromise = fetch('employers.json').then(function(r){ return r.json(); });
+      var employersPromise = fetch('employers.json').then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      }).catch(function(err){
+        var banner = document.createElement('div');
+        banner.setAttribute('role', 'alert');
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;padding:12px 20px;background:#7a1f1f;color:#fff;font:600 14px/1.4 system-ui,sans-serif;text-align:center';
+        banner.textContent = 'employers.json is missing or unreadable (' + err.message + '). Run scripts/export_browser_data.py first, then reload — see README.md.';
+        document.body.prepend(banner);
+        return [];
+      });
       window.employersPromise = employersPromise;
 
       VisaRadarNav.mountNav('app.html#' + (location.hash.replace('#','') || 'browse'));

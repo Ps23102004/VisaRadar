@@ -11,3 +11,5 @@ web/employers.json
 .worktrees/
 
 .superpowers/
+docs/superpowers/
+.gstack/
