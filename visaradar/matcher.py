@@ -11,7 +11,7 @@ from visaradar.lca_data import EmployerRecord
 # Amazon entities hold 28,891) or miss entirely ("Meta" files as META PLATFORMS).
 # Curated by hand, not derived: a generic prefix rollup also swallows
 # APPLE TREE DENTAL and META SOFT. Add a brand here when a lookup misleads.
-_GROUPS: dict[str, tuple[str, ...]] = {
+GROUPS: dict[str, tuple[str, ...]] = {
     "AMAZON": ("AMAZON",),
     "AMAZONCOM": ("AMAZON",),
     "AWS": ("AMAZON WEB SERVICES",),
@@ -61,7 +61,7 @@ class MatchCandidate:
     score: float
 
 
-def _merge(normalized: str, prefixes: tuple[str, ...], snapshot: dict[str, EmployerRecord]) -> EmployerRecord | None:
+def merge_group(normalized: str, prefixes: tuple[str, ...], snapshot: dict[str, EmployerRecord]) -> EmployerRecord | None:
     members = [r for k, r in snapshot.items() if any(k == p or k.startswith(p) for p in prefixes)]
     if not members:
         return None
@@ -88,8 +88,8 @@ def _merge(normalized: str, prefixes: tuple[str, ...], snapshot: dict[str, Emplo
 def match(company_name: str, snapshot: dict[str, EmployerRecord]) -> list[MatchCandidate]:
     normalized = normalize_name(company_name)
 
-    if normalized in _GROUPS:
-        merged = _merge(normalized, _GROUPS[normalized], snapshot)
+    if normalized in GROUPS:
+        merged = merge_group(normalized, GROUPS[normalized], snapshot)
         if merged:
             return [MatchCandidate(record=merged, score=1.0)]
 

@@ -51,3 +51,8 @@ test('employerToFilingRecord honors explicit title/state overrides', () => {
   assert.equal(rec.title, 'Product Manager');
   assert.equal(rec.location, 'WA');
 });
+
+test('filterEmployers query matches brand aliases', () => {
+  const rows = [{ k: 'META PLATFORMS', n: 'Meta Platforms, Inc', a: ['FACEBOOK'], f: 7503, c: 99, l: 'strong', s: [], t: [] }];
+  assert.equal(filterEmployers(rows, { query: 'facebook' }).length, 1);
+});

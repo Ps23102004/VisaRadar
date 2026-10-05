@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from visaradar import lca_data
+from visaradar import lca_data, matcher
 
 
 def label_for(total_filings: int) -> str:
@@ -25,8 +25,28 @@ def main() -> None:
 
     out_path = Path(__file__).resolve().parent.parent / "web" / "employers.json"
 
+    # Add one summed row per multi-entity brand (Amazon, Deloitte) and attach
+    # brand aliases ("a") to single-entity ones (Facebook -> Meta Platforms), so
+    # browse search agrees with `radar company`. Individual entities stay listed.
+    by_prefixes: dict[tuple, list[str]] = {}
+    for alias, prefixes in matcher.GROUPS.items():
+        by_prefixes.setdefault(prefixes, []).append(alias)
+    aliases: dict[str, list[str]] = {}
+    extra: dict[str, lca_data.EmployerRecord] = {}
+    for prefixes, names in by_prefixes.items():
+        merged = matcher.merge_group(names[0], prefixes, snapshot)
+        if merged is None:
+            continue
+        if merged.note:
+            merged.name = f"GROUP:{names[0]}"
+            extra[merged.name] = merged
+            aliases[merged.name] = names
+        else:
+            single = next(k for k, r in snapshot.items() if any(k.startswith(p) for p in prefixes))
+            aliases.setdefault(single, []).extend(names)
+
     records = []
-    for key, record in snapshot.items():
+    for key, record in {**snapshot, **extra}.items():
         total_filings = sum(fy["filings"] for fy in record.by_fy.values())
         total_certified = sum(fy["certified"] for fy in record.by_fy.values())
         certified_pct = round(100 * total_certified / total_filings) if total_filings else 0
@@ -40,6 +60,7 @@ def main() -> None:
                 "s": record.states[:3],
                 "t": record.top_titles[:3],
                 "w": record.wage["median"] if record.wage else None,
+                **({"a": aliases[key]} if key in aliases else {}),
             }
         )
 

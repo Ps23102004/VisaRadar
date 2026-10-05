@@ -12,7 +12,7 @@
     var state = (opts.state || '').trim().toUpperCase();
     return employers.filter(function(e){
       if (query){
-        var haystack = ((e.n || '') + ' ' + (e.k || '')).toLowerCase();
+        var haystack = ((e.n || '') + ' ' + (e.k || '') + ' ' + (e.a || []).join(' ')).toLowerCase();
         if (haystack.indexOf(query) === -1) return false;
       }
       if (state){
