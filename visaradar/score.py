@@ -60,6 +60,8 @@ def assess(record: EmployerRecord | None, posting_stance: str) -> Assessment:
     evidence.append(f"total filings: {total_filings}")
     evidence.append(f"certified percentage: {certified_pct}%")
     evidence.append(trend_line)
+    if record.note:
+        evidence.append(record.note)
 
     if record.top_titles:
         evidence.append(f"top job titles: {', '.join(record.top_titles[:3])}")

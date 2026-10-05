@@ -16,6 +16,7 @@ class EmployerRecord:
     top_titles: List[str]
     states: List[str]
     wage: Optional[Dict[str, int]] = None
+    note: Optional[str] = None
 
 
 def load_snapshot(path: str) -> Dict[str, EmployerRecord]:

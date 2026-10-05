@@ -65,3 +65,32 @@ def test_match_never_guesses_below_cutoff():
     snapshot = {"AMAZON": _record("AMAZON")}
     results = match("A", snapshot)
     assert results == []
+
+
+def _filings(name: str, n: int) -> EmployerRecord:
+    r = _record(name)
+    r.by_fy = {"2024": {"filings": n, "certified": n, "denied": 0}}
+    return r
+
+
+def test_brand_alias_finds_legal_name():
+    snapshot = {"META PLATFORMS": _filings("META PLATFORMS", 7503)}
+    for brand in ("Meta", "Facebook"):
+        results = match(brand, snapshot)
+        assert results and results[0].record.by_fy["2024"]["filings"] == 7503
+
+
+def test_group_sums_sibling_entities_not_just_exact_shell():
+    snapshot = {
+        "AMAZON": _filings("AMAZON", 2),
+        "AMAZONCOM SERVICES": _filings("AMAZONCOM SERVICES", 20072),
+        "AMAZON WEB SERVICES": _filings("AMAZON WEB SERVICES", 3857),
+    }
+    rec = match("Amazon", snapshot)[0].record
+    assert rec.by_fy["2024"]["filings"] == 23931
+    assert "3 related legal entities" in rec.note
+
+
+def test_ungrouped_name_is_not_prefix_merged():
+    snapshot = {"APPLE": _filings("APPLE", 8344), "APPLE TREE DENTAL": _filings("APPLE TREE DENTAL", 4)}
+    assert match("Apple", snapshot)[0].record.by_fy["2024"]["filings"] == 8344
