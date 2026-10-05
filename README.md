@@ -1,5 +1,7 @@
 # VisaRadar
 
+[![tests](https://github.com/Ps23102004/VisaRadar/actions/workflows/tests.yml/badge.svg)](https://github.com/Ps23102004/VisaRadar/actions/workflows/tests.yml)
+
 Paste a job posting, get a real answer on whether that employer actually sponsors work visas — backed by a local LLM extraction pass and **real U.S. Department of Labor LCA filing data** (H-1B / H-1B1 / E-3), not a curated job board's marketing copy.
 
 Every other "visa sponsor" resource is a database you browse. VisaRadar is a tool you point at *any* posting.
