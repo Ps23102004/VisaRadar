@@ -89,6 +89,16 @@ pip install -e ".[mcp]"
 
 Exposes `visaradar_company` (direct lookup, no LLM) and `visaradar_check` (full extraction pipeline) as MCP tools — attach VisaRadar to Claude Desktop, Claude Code, or any MCP client. See `web/mcp.html` for config.
 
+## Where it fails
+
+Measured against the bundled FY2024–FY2026 snapshot (67,722 employers, 659,117 filings):
+
+- **Brand names miss legal names.** Matching is exact-after-normalisation, then `difflib` at a 0.85 cutoff. "Meta" and "Facebook" find nothing, so a posting from Meta Platforms (7,503 filings) is labelled `none`. "OpenAI" (filed as OpenAI OpCo, 255) and "Anthropic" (Anthropic PBC, 247) miss the same way, and so does "JP Morgan". The LLM extracts the name the posting uses, which is usually the brand.
+- **An exact match on a small entity wins over the big one.** "Amazon" matches Amazon LLC exactly: 2 filings, labelled `weak`. The 18 Amazon entities together hold 28,891 filings, 20,072 of them under Amazon.com Services. "Deloitte" matches Deloitte LLP (11, `moderate`) instead of Deloitte Consulting (4,254). Sibling entities are never added up.
+- **"Certified" says almost nothing.** 97.9% of all LCAs in the snapshot are certified. A certified LCA is a wage attestation, not an approved H-1B petition, and it doesn't mean the employer won the lottery or will file for you.
+- **The label is a filing count.** `strong` means 20 or more filings across three years, for any role. It doesn't know whether the employer sponsors *this* role or level, and it covers H-1B / H-1B1 / E-3 only, not green cards (PERM).
+- **The newest fiscal year is partial**, so a "decreasing" trend may just be an incomplete year. The evidence line says so, but the label ignores it.
+
 ## Why this exists
 
 Every "find visa-sponsor jobs" resource on the internet is a curated database — someone else's judgment call about which companies to include, updated on someone else's schedule. VisaRadar inverts that: point it at *any* posting from *any* company, and it cross-references real DOL LCA filing history (public domain, quarterly, authoritative — not scraped from a SaaS product's ToS-violating aggregation) to give you an evidence-backed answer, not a vibe. It's the tool a developer navigating this themselves would actually want, not a lead-gen database.
